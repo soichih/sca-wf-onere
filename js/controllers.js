@@ -10,44 +10,36 @@ app.controller('PageController', function($scope, appconf, $route, jwtHelper, $l
     $scope.openpage = function(page) {
         $location.path(page);
     }
-
-    //TODO - need to update this to ONERE specific
-    //load resources that user has access
-    $scope.resources = {
-        tracking: null, //resource to run sca-service-neuro-tracking
-        life: null, //resource to run life-1
-        hpss: [], //to load from sda - array
-    };
-    $http.get($scope.appconf.wf_api+"/resource/best", {params: {
-        service: "soichih/sca-service-neuro-tracking",
-    }}).then(function(res) {
-        $scope.resources.tracking = res.data;
-        $http.get($scope.appconf.wf_api+"/resource/best", {params: {
-            service: "soichih/life-1",
-        }}).then(function(res) {
-            $scope.resources.life = res.data;
-            $http.get($scope.appconf.wf_api+"/resource", {params: {
-                where: {type: 'hpss'},
-            }})
-            .then(function(res) {
-                $scope.resources.hpss = res.data;
-                $scope.$broadcast("resources", $scope.resources);
-            });
-        });
-    }, console.dir);
 });
 
-app.controller('ImportController', function($scope, toaster, jwtHelper, $http, $location, $routeParams, $timeout, instance, scaTask) {
+app.controller('LoginController', function($scope, toaster, jwtHelper, $http, $location) {
+    $scope.menu_active = "login";
+
+    $scope.submit = function(form) {
+        $http.post($scope.appconf.auth_api+"/ldap/auth", form).then(function(res) {
+            toaster.success(res.data.message);
+            localStorage.setItem($scope.appconf.jwt_id, res.data.jwt);
+            $location.path("/submit");
+        }, function(res) {
+            if(res.data && res.data.message) toaster.error(res.data.message);
+            else toaster.error(res.statusText);
+        }); 
+    }
+});
+
+app.controller('ImportController', function($scope, toaster, jwtHelper, $http, $location, $routeParams, $timeout, instance)  {
     instance.then(function(_instance) {
         $scope.instance = _instance;
     });
 
     $scope.taskid = $routeParams.taskid;
 
+    /*
     $scope.task = scaTask.get($routeParams.taskid);
     $scope.$watchCollection('task', function(task) {
         if(task.status == "finished") $location.path("/submit");
     });
+    */
 });
 
 app.controller('AboutController', function($scope, toaster) {
@@ -55,13 +47,44 @@ app.controller('AboutController', function($scope, toaster) {
 
 app.controller('SubmitController', function($scope, toaster, instance, $http, $routeParams, $location) {
 
+    console.log("quering resources");
+    //TODO - need to update this to ONERE specific
+    //load resources that user has access
+    $scope.resources = {
+        onore: null, //resource to run sca-service-neuro-tracking
+        upload: null, 
+        //hpss: [], //to load from sda - array
+    };
+    $http.get($scope.appconf.wf_api+"/resource/best", {params: {
+        service: "soichih/sca-service-onore",
+    }}).then(function(res) {
+        $scope.resources.onore = res.data;
+        $http.get($scope.appconf.wf_api+"/resource/best", {params: {
+            service: $scope.appconf.upload_task_id,
+        }}).then(function(res) {
+            $scope.resources.upload = res.data;
+            /*
+            $http.get($scope.appconf.wf_api+"/resource", {params: {
+                where: {type: 'hpss'},
+            }})
+            .then(function(res) {
+                $scope.resources.hpss = res.data;
+                $scope.$broadcast("resources", $scope.resources);
+            });
+            */
+        });
+    }, console.dir);
+
     instance.then(function(_instance) {
         $scope.instance = _instance;
-        if($scope.instance.config === undefined) $scope.instance.config = {
-            fibers: 5000,
-            fibers_max: 10000,
+        if(!$scope.instance.config) $scope.instance.config = {
+            //defaults
+            applications: {
+                matlab: true
+            }
         };
 
+        /*
         //find all diff import 
         $http.get($scope.appconf.wf_api+"/task", {params: {
             where: {
@@ -145,6 +168,7 @@ app.controller('SubmitController', function($scope, toaster, instance, $http, $r
             if(res.data && res.data.message) toaster.error(res.data.message);
             else toaster.error(res.statusText);
         });
+        */
 
     });
 
@@ -183,14 +207,14 @@ app.controller('SubmitController', function($scope, toaster, instance, $http, $r
     }
 });
 
-app.controller('TaskController', function($scope, menu, toaster, jwtHelper, $http, $window, $routeParams, $timeout, scaTask, scaResource) {
+app.controller('TaskController', function($scope, toaster, jwtHelper, $http, $window, $routeParams, $timeout, scaResource) {
     $scope.menu_active = "finished";
 
     $scope.taskid = $routeParams.taskid;
     $scope.jwt = localStorage.getItem($scope.appconf.jwt_id);
     $scope.activetab = 0; //raw (TODO is this still used?)
 
-    $scope.task = scaTask.get($routeParams.taskid);
+    //$scope.task = scaTask.get($routeParams.taskid);
 
     $scope.resource = null; //resource where this task is running/ran
     
