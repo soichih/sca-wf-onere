@@ -1,36 +1,72 @@
-$bgcolor: #eee;
+$dark: #206e26;
+$darkmid: #199bb8;
+$mid: #5472B9;
+$lightmid: #3188e7;
+$light: #dbdef1;
+$bgcolor: $light;
+$trans_bgcolor: rgba($mid, .9);
+$border: solid $dark 1px;
+$header_height: 46px;
 @mixin bgimage {
     background: url("../img/neuronet.jpg");
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-position: center center;
+    // background-size: 100%;
+    background-color: #000; //$bgcolor;
+    // background-blend-mode: screen;
+}
+@mixin text-shadow($blur, $color, $opac) {
+    text-shadow: 0 1px $blur rgba($color, $opac),
+    0px -1px $blur rgba($color, $opac),
+    1px 0px $blur rgba($color, $opac),
+    -1px 0px $blur rgba($color, $opac),
+    1px 1px $blur rgba($color, $opac),
+    1px -1px $blur rgba($color, $opac),
+    -1px 1px $blur rgba($color, $opac),
+    -1px -1px $blur rgba($color, $opac);
 }
 body {
     background-color: $bgcolor;
-    padding-top: 50px;
+    padding-top: $header_height;
+    & > div {
+        background-color: $trans_bgcolor;
+    }
 }
-html, footer, nav.navbar
-{
+body,
+footer,
+html,
+#navbar {
     @include bgimage;
 }
+h2 {
+    color: $light;
+}
 .container .page {
-    background-color: white;
-    box-shadow: 0 0 5px #ccc;
+    background-color: $light;
+    box-shadow: 0 0 5px $mid;
     padding: 20px;
 }
 li.clickable:hover {
     cursor: pointer;
     background-color: #ddd !important;
 }
-
-nav.navbar
-{
-
-    // background-image: url("../img/disected_brain.jpg");
+nav.navbar {
+    border-bottom: $border;
+    height: $header_height;
+    @include bgimage;
+    // margin-bottom: 0;
+    & > div {
+        height: $header_height;
+        // background-color: rgba($light, .5);
+    }
 }
-
-footer > div
-{
-    background-color: rgba($bgcolor, .5);
+footer > div {
+    // background-color: $trans_bgcolor;
     padding-bottom: 2em;
+    margin-top: 2em;
+    padding-top: 1em;
+    border-top: $border;
+    color: $light;
+    @include text-shadow(1px, black, 1);
 }
