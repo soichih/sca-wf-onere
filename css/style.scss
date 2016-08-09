@@ -1,7 +1,17 @@
-
+$bgcolor: #eee;
+@mixin bgimage {
+    background: url("../img/neuronet.jpg");
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
 body {
-    background-color: #eee;
+    background-color: $bgcolor;
     padding-top: 50px;
+}
+html, footer, nav.navbar
+{
+    @include bgimage;
 }
 .container .page {
     background-color: white;
@@ -11,4 +21,16 @@ body {
 li.clickable:hover {
     cursor: pointer;
     background-color: #ddd !important;
+}
+
+nav.navbar
+{
+
+    // background-image: url("../img/disected_brain.jpg");
+}
+
+footer > div
+{
+    background-color: rgba($bgcolor, .5);
+    padding-bottom: 2em;
 }

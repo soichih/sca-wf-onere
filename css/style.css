@@ -2,6 +2,12 @@ body {
   background-color: #eee;
   padding-top: 50px; }
 
+html, footer, nav.navbar {
+  background: url("../img/neuronet.jpg");
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: center center; }
+
 .container .page {
   background-color: white;
   box-shadow: 0 0 5px #ccc;
@@ -10,3 +16,7 @@ body {
 li.clickable:hover {
   cursor: pointer;
   background-color: #ddd !important; }
+
+footer > div {
+  background-color: rgba(238, 238, 238, 0.5);
+  padding-bottom: 2em; }
