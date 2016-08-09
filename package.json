@@ -32,5 +32,11 @@
     "sca-ng-wf": "^1.0.4",
     "sca-product-raw": "^1.0.1",
     "ui-select": "^0.18.1"
+  },
+  "devDependencies": {
+    "gulp": "~3.9.1",
+    "gulp-util": "~3.0.7",
+    "gulp-sass": "~2.3.2",
+    "gulp-livereload": "~3.8.1"
   }
 }
