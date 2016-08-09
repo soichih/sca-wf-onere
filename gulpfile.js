@@ -4,7 +4,7 @@ var gulp = require('gulp'),
 	livereload = require('gulp-livereload'),
 	log = util.log;
 
-var sassFiles = "*.scss";
+var sassFiles = "**/*.scss";
 
 gulp.task('default', function(){
 
@@ -28,6 +28,6 @@ gulp.task("watch", function(){
 
 	//log("Watching scss files for modifications.");
 	gulp.watch(sassFiles, ["sass"]);
-	gulp.watch(["*.html", "**/*.html", "**/*.php", "**/*.ejs", "**/*.css", "**/*.js"], ["reload"]);
+	gulp.watch(["*.html", "t/*.html", "css/style.css", "js/*.js"], ["reload"]);
 	console.log("Watching...");
 });
