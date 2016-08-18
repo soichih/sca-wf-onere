@@ -3,19 +3,19 @@
 angular.module('app.config', [])
 .constant('appconf', {
 
-    api: '/api/sca-wf-life',
+    api: 'https://test.sca.iu.edu/api/sca-wf-life',
 
-    shared_api: '/api/shared',
-    shared_url: '/shared',
-    
-    auth_api: '/api/auth',
-    auth_url: '/auth',
+    shared_api: 'https://test.sca.iu.edu/api/shared',
+    shared_url: 'https://test.sca.iu.edu/shared',
 
-    wf_api: '/api/wf',
-    sca_api: '/api/wf', //deprecated - but a lot of ng components still uses this!
-    
-    progress_api: '/api/progress',
-    progress_url: '/progress',
+    auth_api: 'https://test.sca.iu.edu/api/auth',
+    auth_url: 'https://test.sca.iu.edu/auth',
+
+    wf_api: 'https://test.sca.iu.edu/api/wf',
+    sca_api: 'https://test.sca.iu.edu/api/wf', //deprecated - but a lot of ng components still uses this!
+
+    progress_api: 'https://test.sca.iu.edu/api/progress',
+    progress_url: 'https://test.sca.iu.edu/progress',
 
     jwt_id: 'jwt',
 
@@ -62,6 +62,5 @@ angular.module('app.config', [])
             label: "Someapp2",
             desc: "...",
         }
-   ] 
+   ]
 });
-

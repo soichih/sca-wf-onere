@@ -1,6 +1,5 @@
 <div class="container">
-    <h2>ONORE Application Submitter</h2>
-    <p>Submit ONORE wf</p>
+    <h2>Create New Container</h2>
 
     <div class="page">
         <p class="alert alert-warning" ng-if="!resources.onore">No resource is available to submit your workflow. Please check your resource status.</p>
@@ -77,7 +76,7 @@
 
                             <div class="well">
                                 <p>You can use following URLs to test</p>
-                                <ul ng-repeat="sample in appconf.sample_urls"> 
+                                <ul ng-repeat="sample in appconf.sample_urls">
                                     <li>
                                             <b>{{sample.name}}</b>
                                             <p>{{sample.desc}}</p>
@@ -115,7 +114,7 @@
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
                     <div class="pull-right">
-                        <button type="submit" class="btn btn-primary" 
+                        <button type="submit" class="btn btn-primary"
                             ng-disabled="!instance.config.diff || !instance.config.b || !instance.config.mask">Create Container</button>
                     </div>
                 </div>
@@ -124,4 +123,3 @@
         </form>
     </div><!--page-->
 </div>
-

@@ -13,11 +13,25 @@ app.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
     .when('/submit', {
         templateUrl: 't/submit.html',
         controller: 'SubmitController',
-        requiresLogin: true,
+        requiresLogin: true
     })
     .when('/task/:taskid', {
         templateUrl: 't/task.html',
         controller: 'TaskController',
+        requiresLogin: true
+    })
+    .when('/search', {
+        templateUrl: 't/search.html',
+        controller: 'SearchController',
+        requiresLogin: true
+    })
+    .when('/', {
+        templateUrl: 't/home.html',
+        controller: 'HomeController'
+    })
+    .when('/main', {
+        templateUrl: 't/main.html',
+        controller: 'MainController',
         requiresLogin: true
     })
 
@@ -44,10 +58,10 @@ app.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
     })
     */
     .otherwise({
-        redirectTo: '/submit'
+        redirectTo: '/'
     });
     //console.dir($routeProvider);
-}]).run(['$rootScope', '$location', 'toaster', 'jwtHelper', 'appconf', '$http', 
+}]).run(['$rootScope', '$location', 'toaster', 'jwtHelper', 'appconf', '$http',
 function($rootScope, $location, toaster, jwtHelper, appconf, $http) {
     $rootScope.$on("$routeChangeStart", function(event, next, current) {
         //redirect to /login if user hasn't authenticated yet
@@ -63,4 +77,3 @@ function($rootScope, $location, toaster, jwtHelper, appconf, $http) {
         }
     });
 }]);
-

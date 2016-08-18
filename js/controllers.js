@@ -19,11 +19,11 @@ app.controller('LoginController', function($scope, toaster, jwtHelper, $http, $l
         $http.post($scope.appconf.auth_api+"/ldap/auth", form).then(function(res) {
             toaster.success(res.data.message);
             localStorage.setItem($scope.appconf.jwt_id, res.data.jwt);
-            $location.path("/submit");
+            $location.path("/main");
         }, function(res) {
             if(res.data && res.data.message) toaster.error(res.data.message);
             else toaster.error(res.statusText);
-        }); 
+        });
     }
 });
 
@@ -45,6 +45,17 @@ app.controller('ImportController', function($scope, toaster, jwtHelper, $http, $
 app.controller('AboutController', function($scope, toaster) {
 });
 
+app.controller('HomeController', function($scope, toaster) {
+});
+app.controller('MainController', function($scope, toaster, $location) {
+    $scope.create = function(){
+        $location.path("/submit");
+    };
+    $scope.search = function(){
+        $location.path("/search");
+    };
+});
+
 app.controller('SubmitController', function($scope, toaster, instance, $http, $routeParams, $location) {
 
     console.log("quering resources");
@@ -52,7 +63,7 @@ app.controller('SubmitController', function($scope, toaster, instance, $http, $r
     //load resources that user has access
     $scope.resources = {
         onore: null, //resource to run sca-service-neuro-tracking
-        upload: null, 
+        upload: null,
         //hpss: [], //to load from sda - array
     };
     $http.get($scope.appconf.wf_api+"/resource/best", {params: {
@@ -85,7 +96,7 @@ app.controller('SubmitController', function($scope, toaster, instance, $http, $r
         };
 
         /*
-        //find all diff import 
+        //find all diff import
         $http.get($scope.appconf.wf_api+"/task", {params: {
             where: {
                 instance_id: $routeParams.instid,
@@ -98,7 +109,7 @@ app.controller('SubmitController', function($scope, toaster, instance, $http, $r
             //limit: 1, //find the latest one
         }})
         .then(function(res) {
-            $scope.diffs = []; 
+            $scope.diffs = [];
             res.data.forEach(function(task) {
                 task.products[0].files.forEach(function(file, idx) {
                     file.checked = true;
@@ -126,7 +137,7 @@ app.controller('SubmitController', function($scope, toaster, instance, $http, $r
             //limit: 1,
         }})
         .then(function(res) {
-            $scope.bs = []; 
+            $scope.bs = [];
             res.data.forEach(function(task) {
                 task.products[0].files.forEach(function(file, idx) {
                     file.checked = true;
@@ -140,7 +151,7 @@ app.controller('SubmitController', function($scope, toaster, instance, $http, $r
             if(res.data && res.data.message) toaster.error(res.data.message);
             else toaster.error(res.statusText);
         });
-        
+
         //find all mask import
         $http.get($scope.appconf.wf_api+"/task", {params: {
             where: {
@@ -154,7 +165,7 @@ app.controller('SubmitController', function($scope, toaster, instance, $http, $r
             //limit: 1,
         }})
         .then(function(res) {
-            $scope.masks = []; 
+            $scope.masks = [];
             res.data.forEach(function(task) {
                 task.products[0].files.forEach(function(file, idx) {
                     file.checked = true;
@@ -181,7 +192,7 @@ app.controller('SubmitController', function($scope, toaster, instance, $http, $r
         deps.push(dwi.task_id);
         deps.push(b.task_id);
         deps.push(mask.task_id);
-        
+
         $http.post($scope.appconf.wf_api+"/task", {
             instance_id: $scope.instance._id,
             name: "conneval task",
@@ -217,8 +228,8 @@ app.controller('TaskController', function($scope, toaster, jwtHelper, $http, $wi
     //$scope.task = scaTask.get($routeParams.taskid);
 
     $scope.resource = null; //resource where this task is running/ran
-    
-    //not sure if we need this? 
+
+    //not sure if we need this?
     $scope.$watchCollection('task', function(task) {
        //also load resource info
         if(task.resource_id && !$scope.resource) {
@@ -231,4 +242,3 @@ app.controller('TaskController', function($scope, toaster, jwtHelper, $http, $wi
         $window.history.back();
     }
 });
-
