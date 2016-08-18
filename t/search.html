@@ -1,0 +1,45 @@
+<div class="container">
+    <h2>Search for Containers</h2>
+
+    <div class="page">
+        <!-- <p class="alert alert-warning" ng-if="!resources.onore">No resource is available to submit your workflow. Please check your resource status.</p> -->
+        <form ng-submit="search()" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Keywords</label>
+                <div class="col-sm-10">
+                    <input type="text" ng-model="keywords" class="form-control" placeholder="search" />
+                </div>
+            </div>
+
+
+
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <div class="pull-right">
+                        <button type="submit" class="btn btn-primary"
+                            ng-disabled="!keywords">Search</button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+		<hr />
+		<div ng-show="results">
+			<h3>Results</h3>
+			<div ng-repeat="result in results">
+<pre>
+
+########  #######     ########   #######
+   ##    ##     ##    ##     ## ##     ##
+   ##    ##     ##    ##     ## ##     ##
+   ##    ##     ##    ##     ## ##     ##
+   ##    ##     ##    ##     ## ##     ##
+   ##    ##     ##    ##     ## ##     ##
+   ##     #######     ########   #######
+   
+</pre>
+			</div>
+		</div>
+    </div><!--page-->
+</div>

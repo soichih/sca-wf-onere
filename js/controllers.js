@@ -56,9 +56,28 @@ app.controller('MainController', function($scope, toaster, $location) {
     };
 });
 
+app.controller("SearchController", function($scope) {
+
+
+    $scope.keywords = "";
+    $scope.results = null;
+
+    $scope.search = function(){
+        console.debug("Searching for " + $scope.keywords);
+
+        $scope.results = [];
+    };
+
+});
+
 app.controller('SubmitController', function($scope, toaster, instance, $http, $routeParams, $location) {
 
-    console.log("quering resources");
+    //console.log("quering resources");
+
+    //JSON at the bottom of the submit page only appears if this is set to true
+    $scope.DEBUG = false;
+
+
     //TODO - need to update this to ONERE specific
     //load resources that user has access
     $scope.resources = {
