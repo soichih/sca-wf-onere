@@ -12,6 +12,13 @@ app.controller('PageController', function($scope, appconf, $route, jwtHelper, $l
     }
 });
 
+
+app.controller('AboutController', function($scope, toaster) {
+});
+
+app.controller('HomeController', function($scope, toaster) {
+});
+
 app.controller('LoginController', function($scope, toaster, jwtHelper, $http, $location) {
     $scope.menu_active = "login";
 
@@ -42,11 +49,6 @@ app.controller('LoginController', function($scope, toaster, jwtHelper, $http, $l
 //     */
 // });
 
-app.controller('AboutController', function($scope, toaster) {
-});
-
-app.controller('HomeController', function($scope, toaster) {
-});
 app.controller('MainController', function($scope, toaster, $location) {
     $scope.create = function(){
         $location.path("/submit");
@@ -54,26 +56,6 @@ app.controller('MainController', function($scope, toaster, $location) {
     $scope.search = function(){
         $location.path("/search");
     };
-});
-
-//After you construct a container, this is where you can download it (or run it or whatever)
-app.controller('ContainerController', function($scope, toaster, $routeParams) {
-    var container_id = $routeParams.container_id;
-    $scope.container = {
-        "container_id": container_id,
-        "name": "Some Container",
-        "description": "Some Description",
-        "details": "Ubuntu with Life and some other stuff",
-        "data": "Data description"
-    };
-
-    $scope.download_container = function(){
-        alert("Downloading Docker Container " + $scope.container.container_id);
-    };
-    $scope.download_data = function(){
-        alert("Downloading data for " + $scope.container.container_id);
-    };
-
 });
 
 app.controller("SearchController", function($scope) {
@@ -280,4 +262,28 @@ app.controller('TaskController', function($scope, toaster, jwtHelper, $http, $wi
     $scope.back = function() {
         $window.history.back();
     }
+});
+
+
+//After you construct a container, this is where you can download it (or run it or whatever)
+app.controller('ContainerController', function($scope, toaster, $routeParams) {
+    var container_id = $routeParams.container_id;
+
+    //TODO: Do Ajax call here to get all the important information about the container/data
+
+    $scope.container = {
+        "container_id": container_id,
+        "name": "Some Container",
+        "description": "Some Description",
+        "details": "Ubuntu with Life and some other stuff",
+        "data": "Data description"
+    };
+
+    $scope.download_container = function(){
+        alert("Downloading Docker Container " + $scope.container.container_id);
+    };
+    $scope.download_data = function(){
+        alert("Downloading data for " + $scope.container.container_id);
+    };
+
 });
