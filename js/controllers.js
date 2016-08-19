@@ -58,16 +58,52 @@ app.controller('MainController', function($scope, toaster, $location) {
     };
 });
 
-app.controller("SearchController", function($scope) {
-
-
-    $scope.keywords = "";
+app.controller("SearchController", function($scope, $http, $location, searchState) {
+    $scope.keywords = searchState.keywords;
     $scope.results = null;
 
-    $scope.search = function(){
-        console.debug("Searching for " + $scope.keywords);
+    $scope.search = SearchFunction;
+    $scope.select = SelectFunction;
 
+    if($scope.keywords)
+    {
+        $scope.search();
+    }
+
+    function SearchFunction(){
+        console.debug("Searching for " + $scope.keywords);
+        // TODO:  API Call to perform the search.
         $scope.results = [];
+
+        //sample results
+        $scope.results = [
+            {
+                "container_id": 1234,
+                "name": "Container 1",
+                "description": "Some Description",
+                "details": "Ubuntu with Life and some other stuff",
+                "data": "Neuro Data"
+            },
+            {
+                "container_id": 5678,
+                "name": "Container 2",
+                "description": "Some Description",
+                "details": "Ubuntu with Life and some other stuff",
+                "data": "Neuro data 2"
+            },
+            {
+                "container_id": 9012,
+                "name": "Container 3",
+                "description": "Some Description",
+                "details": "Ubuntu with Life and some other stuff",
+                "data": "MRIs"
+            }
+        ];
+    };
+
+    function SelectFunction(id){
+        searchState.keywords = $scope.keywords;
+        $location.path("/container/"+id);
     };
 
 });

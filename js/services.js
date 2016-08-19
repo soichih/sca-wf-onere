@@ -42,7 +42,7 @@ app.factory('instance', function(appconf, $http, jwtHelper, toaster) {
     var workflow_id = "sca-wf-onore"; //needs to match package.json/name
     return $http.get(appconf.wf_api+'/instance', {
         params: {
-            find: { workflow_id: workflow_id } 
+            find: { workflow_id: workflow_id }
         }
     })
     .then(function(res) {
@@ -70,3 +70,9 @@ app.factory('instance', function(appconf, $http, jwtHelper, toaster) {
     });
 });
 
+//save search state
+app.factory('searchState', function(){
+    return {
+        keywords: ""
+    }
+});
