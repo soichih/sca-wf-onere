@@ -34,6 +34,11 @@ app.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
         controller: 'MainController',
         requiresLogin: true
     })
+    .when('/container/:container_id', {
+        templateUrl: 't/container.html',
+        controller: 'ContainerController',
+        requiresLogin: true
+    })
 
     /*
     .when('/running', {
