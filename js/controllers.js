@@ -312,7 +312,9 @@ app.controller('ContainerController', function($scope, toaster, $routeParams) {
         "name": "Some Container",
         "description": "Some Description",
         "details": "Ubuntu with Life and some other stuff",
-        "data": "Data description"
+        "data": "Data description",
+        "data_location": "some location",
+        "docker_command": "some command"
     };
 
     $scope.download_container = function(){
