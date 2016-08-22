@@ -1,2 +1,2 @@
-# sca-wf-onore
-ONORE WF UI prototype
+# sca-wf-onere
+ONERE Workflow UI 
