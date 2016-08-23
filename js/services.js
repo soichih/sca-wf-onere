@@ -39,7 +39,7 @@ app.factory('menu', function(appconf, $http, jwtHelper, $sce, toaster) {
 //return singleton instance or create new one if it doesn't exist yet
 app.factory('instance', function(appconf, $http, jwtHelper, toaster) {
     //console.log("getting test instance");
-    var workflow_id = "sca-wf-onore"; //needs to match package.json/name
+    var workflow_id = "sca-wf-onere"; //needs to match package.json/name
     return $http.get(appconf.wf_api+'/instance', {
         params: {
             find: { workflow_id: workflow_id }
@@ -53,7 +53,7 @@ app.factory('instance', function(appconf, $http, jwtHelper, toaster) {
             //need to create one
             return $http.post(appconf.wf_api+"/instance", {
                 workflow_id: workflow_id,
-                name: "onore instance",
+                name: "onere instance",
                 desc: "singleton",
                 config: {some: "thing"},
             }).then(function(res) {

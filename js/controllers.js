@@ -110,36 +110,23 @@ app.controller("SearchController", function($scope, $http, $location, searchStat
 
 app.controller('SubmitController', function($scope, toaster, instance, $http, $routeParams, $location) {
 
-    //console.log("quering resources");
-
     //JSON at the bottom of the submit page only appears if this is set to true
     $scope.DEBUG = false;
-
 
     //TODO - need to update this to ONERE specific
     //load resources that user has access
     $scope.resources = {
-        onore: null, //resource to run sca-service-neuro-tracking
+        onere: null, //resource to run sca-service-neuro-tracking
         upload: null,
-        //hpss: [], //to load from sda - array
     };
     $http.get($scope.appconf.wf_api+"/resource/best", {params: {
-        service: "soichih/sca-service-onore",
+        service: "soichih/sca-service-onere",
     }}).then(function(res) {
-        $scope.resources.onore = res.data;
+        $scope.resources.onere = res.data;
         $http.get($scope.appconf.wf_api+"/resource/best", {params: {
             service: $scope.appconf.upload_task_id,
         }}).then(function(res) {
             $scope.resources.upload = res.data;
-            /*
-            $http.get($scope.appconf.wf_api+"/resource", {params: {
-                where: {type: 'hpss'},
-            }})
-            .then(function(res) {
-                $scope.resources.hpss = res.data;
-                $scope.$broadcast("resources", $scope.resources);
-            });
-            */
         });
     }, console.dir);
 
