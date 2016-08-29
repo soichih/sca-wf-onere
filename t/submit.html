@@ -72,7 +72,7 @@
                         <tab index="1" heading="From URL">
                             <br>
                             <label for="subject">URL</label>
-                            <input type="text" class="form-control" ng-model="url" placeholder="http://somewhere.com/somepath/some.nifti" required>
+                            <input type="text" class="form-control" ng-model="url" placeholder="http://somewhere.com/somepath/some.nifti">
 
                             <div class="well">
                                 <p>You can use following URLs to test</p>
@@ -115,7 +115,7 @@
                 <div class="col-sm-offset-2 col-sm-10">
                     <div class="pull-right">
                         <button type="submit" class="btn btn-primary"
-                            ng-disabled="!instance.config.diff || !instance.config.b || !instance.config.mask">Create Container</button>
+                            ng-disabled="button_disabled">Create Container</button>
                     </div>
                 </div>
             </div>

@@ -111,7 +111,9 @@ app.controller("SearchController", function($scope, $http, $location, searchStat
 app.controller('SubmitController', function($scope, toaster, instance, $http, $routeParams, $location) {
 
     //JSON at the bottom of the submit page only appears if this is set to true
-    $scope.DEBUG = false;
+    $scope.DEBUG = true;
+
+    $scope.button_disabled = true;
 
     //TODO - need to update this to ONERE specific
     //load resources that user has access
@@ -129,6 +131,49 @@ app.controller('SubmitController', function($scope, toaster, instance, $http, $r
             $scope.resources.upload = res.data;
         });
     }, console.dir);
+
+    $scope.$on("file_uploaded", function(e, file) {
+         console.debug(e, file);
+
+         //Use sca-product-raw to save the file permanently
+         // Mostly coppied from conneval
+         $http.get($scope.appconf.wf_api+"/resource/ls/"+$scope.resources.upload.resource._id, {params: {
+             path: $scope.instance._id+"/_upload",
+         }}).then(function(res) {
+             if(!res.data.files) {
+                 toaster.error("Failed to load files uploaded");
+                 return;
+             }
+             var symlinks = [];
+             res.data.files.forEach(function(file1) {
+                 symlinks.push({src: "../_upload/"+file1.filename, dest: "download/"+file1.filename});
+             });
+             $http.post($scope.appconf.wf_api+"/task", {
+                 instance_id: $scope.instance._id,
+                 name: $scope.type, //important for bvals and bvecs which doesn't have dedicated importer
+                 service: "soichih/sca-product-raw",
+                 config: {
+                     copy: symlinks,
+                 }
+             })
+             .then(function(res) {
+                //  var symlink_task = res.data.task;
+                //  do_import(symlink_task);
+
+                //Register with API (TODO: Lookup documentation on this)
+                $http.post($scope.appconf.api+"/register", {
+                    instance_id: $scope.instance_id,
+                    file: file
+                });
+
+             }, function(res) {
+                 if(res.data && res.data.message) toaster.error(res.data.message);
+                 else toaster.error(res.statusText);
+             });
+         });
+
+
+     });
 
     instance.then(function(_instance) {
         $scope.instance = _instance;
@@ -228,33 +273,56 @@ app.controller('SubmitController', function($scope, toaster, instance, $http, $r
     });
 
     $scope.submit = function() {
-        var dwi = $scope.instance.config.diff;
-        var b = $scope.instance.config.b;
-        var mask = $scope.instance.config.mask;
 
-        var deps = [];
-        deps.push(dwi.task_id);
-        deps.push(b.task_id);
-        deps.push(mask.task_id);
+        // console.debug($scope);
 
+        // var dwi = $scope.instance.config.diff;
+        // var b = $scope.instance.config.b;
+        // var mask = $scope.instance.config.mask;
+        //
+        // var deps = [];
+        // deps.push(dwi.task_id);
+        // deps.push(b.task_id);
+        // deps.push(mask.task_id);
+        //
+        // $http.post($scope.appconf.wf_api+"/task", {
+        //     instance_id: $scope.instance._id,
+        //     name: "conneval task",
+        //     desc: $scope.instance.config.desc,
+        //     service: "soichih/sca-service-neuro-tracking",
+        //     config: {
+        //         "dwi_path": "../"+dwi.task_id+"/"+dwi.filename,
+        //         "b_path": "../"+b.task_id+"/"+b.filename,
+        //         "mask_path": "../"+mask.task_id+"/"+mask.filename,
+        //         "lmax": [2,4,6], //TODO
+        //         "fibers": $scope.instance.config.fibers,
+        //         "fibers_max": $scope.instance.config.fibers_max,
+        //     },
+        //     deps: deps,
+        // })
+        // .then(function(res) {
+        //     toaster.pop("success", "Submitted a new task");
+        //     $location.path("/task/"+res.data.task._id);
+        // }, function(res) {
+        //     if(res.data && res.data.message) toaster.error(res.data.message);
+        //     else toaster.error(res.statusText);
+        // });
+    }
+
+
+    $scope.fromurl = function(url) {
+        //first submit download service
         $http.post($scope.appconf.wf_api+"/task", {
             instance_id: $scope.instance._id,
-            name: "conneval task",
-            desc: $scope.instance.config.desc,
-            service: "soichih/sca-service-neuro-tracking",
+            service: "soichih/sca-product-raw", //-raw service provides URL download
+            name: $scope.type,
             config: {
-                "dwi_path": "../"+dwi.task_id+"/"+dwi.filename,
-                "b_path": "../"+b.task_id+"/"+b.filename,
-                "mask_path": "../"+mask.task_id+"/"+mask.filename,
-                "lmax": [2,4,6], //TODO
-                "fibers": $scope.instance.config.fibers,
-                "fibers_max": $scope.instance.config.fibers_max,
-            },
-            deps: deps,
+                download: [{dir:"download", url:url}],
+            }
         })
         .then(function(res) {
-            toaster.pop("success", "Submitted a new task");
-            $location.path("/task/"+res.data.task._id);
+            var download_task = res.data.task;
+            do_import(download_task);
         }, function(res) {
             if(res.data && res.data.message) toaster.error(res.data.message);
             else toaster.error(res.statusText);
