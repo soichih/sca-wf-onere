@@ -1,21 +1,21 @@
 {
-  "name": "sca-wf-onore",
+  "name": "sca-wf-onere",
   "version": "1.0.0",
-  "description": "ONORE UI",
+  "description": "ONERE UI",
   "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/soichih/sca-wf-onore.git"
+    "url": "git+https://github.com/soichih/sca-wf-onere.git"
   },
   "author": "Soichi Hayashi <hayashis@iu.edu> (http://soichi.us)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/soichih/sca-wf-onore/issues"
+    "url": "https://github.com/soichih/sca-wf-onere/issues"
   },
-  "homepage": "https://github.com/soichih/sca-wf-onore#readme",
+  "homepage": "https://github.com/soichih/sca-wf-onere#readme",
   "dependencies": {
     "angular": "^1.5.8",
     "angular-bootstrap": "^0.12.2",
@@ -34,9 +34,9 @@
     "ui-select": "^0.18.1"
   },
   "devDependencies": {
-    "gulp": "~3.9.1",
-    "gulp-util": "~3.0.7",
+    "gulp": "^3.9.1",
+    "gulp-livereload": "~3.8.1",
     "gulp-sass": "~2.3.2",
-    "gulp-livereload": "~3.8.1"
+    "gulp-util": "~3.0.7"
   }
 }

@@ -3,15 +3,31 @@
 app.controller('PageController', function($scope, appconf, $route, jwtHelper, $location, $http) {
     $scope.appconf = appconf;
     $scope.title = appconf.title;
-
+    
     var jwt = localStorage.getItem(appconf.jwt_id);
     if(jwt) $scope.user = jwtHelper.decodeToken(jwt);
 
     $scope.openpage = function(page) {
         $location.path(page);
     }
-});
+    
+    $scope.resources = {
+        onere: null, 
+        upload: null,
+    };
 
+    //load onere resource
+    $http.get($scope.appconf.wf_api+"/resource", {params: {
+        find: JSON.stringify({name: "onere"})
+    }}).then(function(res) {
+        $scope.resources.onere = res.data;
+        $http.get($scope.appconf.wf_api+"/resource/best", {params: {
+            service: $scope.appconf.upload_task_id,
+        }}).then(function(res) {
+            $scope.resources.upload = res.data;
+        });
+    }, console.dir);
+});
 
 app.controller('AboutController', function($scope, toaster) {
 });
@@ -73,6 +89,7 @@ app.controller("SearchController", function($scope, $http, $location, searchStat
     function SearchFunction(){
         console.debug("Searching for " + $scope.keywords);
         // TODO:  API Call to perform the search.
+        // use https://test.sca.iu.edu/onere/apidoc/#api-Application-GetApplication
         $scope.results = [];
 
         //sample results
@@ -110,25 +127,49 @@ app.controller("SearchController", function($scope, $http, $location, searchStat
 
 app.controller('SubmitController', function($scope, toaster, instance, $http, $routeParams, $location) {
 
-    //JSON at the bottom of the submit page only appears if this is set to true
-    $scope.DEBUG = false;
+    //list of files uploaded / downloaded for dataset
+    $scope.files = [];
 
-    //TODO - need to update this to ONERE specific
-    //load resources that user has access
-    $scope.resources = {
-        onere: null, //resource to run sca-service-neuro-tracking
-        upload: null,
-    };
-    $http.get($scope.appconf.wf_api+"/resource/best", {params: {
-        service: "soichih/sca-service-onere",
-    }}).then(function(res) {
-        $scope.resources.onere = res.data;
-        $http.get($scope.appconf.wf_api+"/resource/best", {params: {
-            service: $scope.appconf.upload_task_id,
-        }}).then(function(res) {
-            $scope.resources.upload = res.data;
-        });
-    }, console.dir);
+    $scope.$on("file_uploaded", function(e, file) {
+         console.debug(e, file);
+
+         //Use sca-product-raw to save the file permanently
+         // Mostly coppied from conneval
+         $http.get($scope.appconf.wf_api+"/resource/ls/"+$scope.resources.upload.resource._id, {params: {
+             path: $scope.instance._id+"/_upload",
+         }}).then(function(res) {
+            if(!res.data.files) {
+                toaster.error("Failed to load files uploaded");
+                return;
+            }
+            res.data.files.forEach(function(_file) {
+                //symlinks.push({src: "../_upload/"+file1.filename, dest: "download/"+file1.filename});
+               $scope.files.push({filename: _file.filename, src: "../_upload/"+_file.filename});
+            });
+            /*
+            $http.post($scope.appconf.wf_api+"/task", {
+                instance_id: $scope.instance._id,
+                name: $scope.type, //important for bvals and bvecs which doesn't have dedicated importer
+                service: "soichih/sca-product-raw",
+                config: {
+                    copy: symlinks,
+                }
+            })
+            .then(function(res) {
+               //  var symlink_task = res.data.task;
+               //  do_import(symlink_task);
+               $scope.dataset.push({
+                   
+               });
+
+            }, function(res) {
+                if(res.data && res.data.message) toaster.error(res.data.message);
+                else toaster.error(res.statusText);
+            });
+            */
+         });
+
+     });
 
     instance.then(function(_instance) {
         $scope.instance = _instance;
@@ -228,33 +269,76 @@ app.controller('SubmitController', function($scope, toaster, instance, $http, $r
     });
 
     $scope.submit = function() {
-        var dwi = $scope.instance.config.diff;
-        var b = $scope.instance.config.b;
-        var mask = $scope.instance.config.mask;
-
-        var deps = [];
-        deps.push(dwi.task_id);
-        deps.push(b.task_id);
-        deps.push(mask.task_id);
-
-        $http.post($scope.appconf.wf_api+"/task", {
-            instance_id: $scope.instance._id,
-            name: "conneval task",
-            desc: $scope.instance.config.desc,
-            service: "soichih/sca-service-neuro-tracking",
+        var dataset_path = "/N/dc2/projects/lifebid/onere/datasets";
+        //register dataset (to obtain the dataset._id)
+        $http.post($scope.appconf.api+"/dataset", {
+            name: "edit me",
+            //storage: "dc2",
+            //path: dataset_path,
             config: {
-                "dwi_path": "../"+dwi.task_id+"/"+dwi.filename,
-                "b_path": "../"+b.task_id+"/"+b.filename,
-                "mask_path": "../"+mask.task_id+"/"+mask.filename,
-                "lmax": [2,4,6], //TODO
-                "fibers": $scope.instance.config.fibers,
-                "fibers_max": $scope.instance.config.fibers_max,
-            },
-            deps: deps,
+                some: "info",
+            }
         })
         .then(function(res) {
-            toaster.pop("success", "Submitted a new task");
-            $location.path("/task/"+res.data.task._id);
+            var dataset = res.data; 
+
+            console.log("registered dataset");
+            console.dir(dataset);
+            
+            //submit task to copy input data to /N/dc2/projects/lifebid/onere/datasets
+            $scope.files.forEach(function(file) {
+                file.dest = dataset_path+"/"+dataset._id+"/"+file.filename;
+            });
+            $http.post($scope.appconf.wf_api+"/task", {
+                instance_id: $scope.instance._id,
+                name: "onere dataset copy",
+                service: "soichih/sca-product-raw",
+                config: {
+                    copy: $scope.files
+                }
+            })
+            .then(function(res) {
+                var copy_task = res.data.task;
+               
+                //submited dataset copy task.. now I can submit container build task
+                $http.post($scope.appconf.wf_api+"/task", {
+                    instance_id: $scope.instance._id,
+                    service: "soichih/sca-service-onere",
+                    name: $scope.instance.name,
+                    desc: $scope.instance.config.desc,
+                    config: {
+                        dataset_id: dataset._id,
+                        applications: $scope.instance.config.applications,
+                    },
+                    deps: [copy_task._id],
+                })
+                .then(function(res) {
+                    toaster.pop("success", "Submitted a container build task");
+                    $location.path("/task/"+res.data.task._id);
+                }, function(res) {
+                    if(res.data && res.data.message) toaster.error(res.data.message);
+                    else toaster.error(res.statusText);
+                });
+            });
+        }, function(res) {
+            if(res.data && res.data.message) toaster.error(res.data.message);
+            else toaster.error(res.statusText);
+        });
+    }
+
+    $scope.fromurl = function(url) {
+        //first submit download service
+        $http.post($scope.appconf.wf_api+"/task", {
+            instance_id: $scope.instance._id,
+            service: "soichih/sca-product-raw", //-raw service provides URL download
+            name: $scope.type,
+            config: {
+                download: [{dir:"download", url:url}],
+            }
+        })
+        .then(function(res) {
+            var download_task = res.data.task;
+            do_import(download_task);
         }, function(res) {
             if(res.data && res.data.message) toaster.error(res.data.message);
             else toaster.error(res.statusText);
@@ -262,7 +346,7 @@ app.controller('SubmitController', function($scope, toaster, instance, $http, $r
     }
 });
 
-app.controller('TaskController', function($scope, toaster, jwtHelper, $http, $window, $routeParams, $timeout, scaResource) {
+app.controller('TaskController', function($scope, toaster, jwtHelper, $http, $window, $routeParams, $timeout, scaResource, scaTask) {
     $scope.menu_active = "finished";
 
     $scope.taskid = $routeParams.taskid;
@@ -270,9 +354,10 @@ app.controller('TaskController', function($scope, toaster, jwtHelper, $http, $wi
     $scope.activetab = 0; //raw (TODO is this still used?)
 
     //$scope.task = scaTask.get($routeParams.taskid);
+    $scope.task = scaTask.get($routeParams.taskid);
 
+    /*
     $scope.resource = null; //resource where this task is running/ran
-
     //not sure if we need this?
     $scope.$watchCollection('task', function(task) {
        //also load resource info
@@ -281,6 +366,7 @@ app.controller('TaskController', function($scope, toaster, jwtHelper, $http, $wi
             $scope.resource = scaResource.get(task.resource_id);
         }
     });
+    */
 
     $scope.back = function() {
         $window.history.back();

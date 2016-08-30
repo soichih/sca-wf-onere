@@ -1,5 +1,5 @@
 body {
-  background-color: #dbdef1;
+  background-color: #eee;
   padding-top: 46px; }
   body > div {
     background-color: rgba(84, 114, 185, 0.9); }
@@ -15,10 +15,10 @@ html,
   background-color: #000; }
 
 h2 {
-  color: #dbdef1; }
+  color: #eee; }
 
 .container .page {
-  background-color: #dbdef1;
+  background-color: #eee;
   box-shadow: 0 0 5px #5472B9;
   padding: 20px; }
 
@@ -42,5 +42,5 @@ footer > div {
   margin-top: 2em;
   padding-top: 1em;
   border-top: solid #206e26 1px;
-  color: #dbdef1;
+  color: #eee;
   text-shadow: 0 1px 1px black, 0px -1px 1px black, 1px 0px 1px black, -1px 0px 1px black, 1px 1px 1px black, 1px -1px 1px black, -1px 1px 1px black, -1px -1px 1px black; }

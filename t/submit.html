@@ -7,7 +7,7 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">Description</label>
                 <div class="col-sm-10">
-                    <textarea ng-model="instance.config.desc" class="form-control" placeholder="Description for this submission"></textarea>
+                    <textarea ng-model="instance.config.desc" class="form-control" placeholder="Description for this submission" required></textarea>
                 </div>
             </div>
 
@@ -72,7 +72,7 @@
                         <tab index="1" heading="From URL">
                             <br>
                             <label for="subject">URL</label>
-                            <input type="text" class="form-control" ng-model="url" placeholder="http://somewhere.com/somepath/some.nifti" required>
+                            <input type="text" class="form-control" ng-model="url" placeholder="http://somewhere.com/somepath/some.nifti">
 
                             <div class="well">
                                 <p>You can use following URLs to test</p>
@@ -114,12 +114,11 @@
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
                     <div class="pull-right">
-                        <button type="submit" class="btn btn-primary"
-                            ng-disabled="!instance.config.diff || !instance.config.b || !instance.config.mask">Create Container</button>
+                        <button class="btn btn-primary">Create Container</button>
                     </div>
                 </div>
             </div>
-            <pre ng-show="DEBUG">{{instance|json}}</pre>
+            <pre ng-show="appconf.debug">{{instance|json}}</pre>
         </form>
     </div><!--page-->
 </div>
