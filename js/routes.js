@@ -2,43 +2,51 @@
 
 app.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
     $routeProvider
-    .when('/login', {
-        templateUrl: 't/login.html',
-        controller: 'LoginController',
-    })
-    .when('/about', {
-        templateUrl: 't/about.html',
-        controller: 'AboutController',
-    })
-    .when('/submit', {
-        templateUrl: 't/submit.html',
-        controller: 'SubmitController',
-        requiresLogin: true
-    })
-    .when('/task/:taskid', {
-        templateUrl: 't/task.html',
-        controller: 'TaskController',
-        requiresLogin: true
-    })
-    .when('/search', {
-        templateUrl: 't/search.html',
-        controller: 'SearchController',
-        requiresLogin: true
+    .when('/dashboard', {
+        templateUrl: 't/dashboard.html',
+        controller: 'DashboardController'
     })
     .when('/', {
-        templateUrl: 't/home.html',
-        controller: 'HomeController'
+        templateUrl: 't/dashboard.html',
+        controller: 'DashboardController'
     })
-    .when('/main', {
-        templateUrl: 't/main.html',
-        controller: 'MainController',
-        requiresLogin: true
-    })
-    .when('/container/:container_id', {
-        templateUrl: 't/container.html',
-        controller: 'ContainerController',
-        requiresLogin: true
-    })
+    // .when('/login', {
+    //     templateUrl: 't/login.html',
+    //     controller: 'LoginController',
+    // })
+    // .when('/about', {
+    //     templateUrl: 't/about.html',
+    //     controller: 'AboutController',
+    // })
+    // .when('/submit', {
+    //     templateUrl: 't/submit.html',
+    //     controller: 'SubmitController',
+    //     requiresLogin: true
+    // })
+    // .when('/task/:taskid', {
+    //     templateUrl: 't/task.html',
+    //     controller: 'TaskController',
+    //     requiresLogin: true
+    // })
+    // .when('/search', {
+    //     templateUrl: 't/search.html',
+    //     controller: 'SearchController',
+    //     requiresLogin: true
+    // })
+    // .when('/', {
+    //     templateUrl: 't/home.html',
+    //     controller: 'HomeController'
+    // })
+    // .when('/main', {
+    //     templateUrl: 't/main.html',
+    //     controller: 'MainController',
+    //     requiresLogin: true
+    // })
+    // .when('/container/:container_id', {
+    //     templateUrl: 't/container.html',
+    //     controller: 'ContainerController',
+    //     requiresLogin: true
+    // })
 
     /*
     .when('/running', {
