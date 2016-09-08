@@ -9,6 +9,40 @@ app.controller('DashboardController', function($scope, appconf, $route, jwtHelpe
     $scope.appconf = appconf;
     $scope.title = appconf.title;
 
+    $scope.final_stats = {
+        users: 200,
+        resources: 300,
+        services: 150,
+        datasets: 320
+    };
+
+    $scope.stats = {
+        users: 0,
+        resources: 0,
+        services: 0,
+        datasets: 0
+    };
+
+    function stat_animation_timeout() {
+        var goAgain = false;
+        for(var i in $scope.stats)
+        {
+            if($scope.stats[i] < $scope.final_stats[i])
+            {
+                $scope.stats[i] ++;
+                goAgain = true;
+            }
+        }
+        $scope.$apply();
+
+        if(goAgain)
+        {
+            setTimeout(stat_animation_timeout, 1);
+        }
+    }
+
+    setTimeout(stat_animation_timeout, 100);
+
     $scope.keywords = searchState.keywords;
     $scope.search = function() {
         if ($scope.keywords) {
@@ -42,8 +76,7 @@ app.controller('SearchResultsController', function($scope, appconf, $route, jwtH
     }];
 
     $scope.search = function() {
-        if(!$scope.keywords)
-        {
+        if (!$scope.keywords) {
             //no keywords? back to dashboard
             $location.path("/");
             return false;
