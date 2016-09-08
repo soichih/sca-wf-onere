@@ -10,6 +10,10 @@ app.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
         templateUrl: 't/dashboard.html',
         controller: 'DashboardController'
     })
+    .when('', {
+        templateUrl: 't/dashboard.html',
+        controller: 'DashboardController'
+    })
     .when('/results', {
         templateUrl: 't/results.html',
         controller: 'SearchResultsController'

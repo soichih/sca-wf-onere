@@ -10,12 +10,14 @@ app.controller('DashboardController', function($scope, appconf, $route, jwtHelpe
     $scope.title = appconf.title;
 
     $scope.keywords = searchState.keywords;
-    $scope.search = function(){
-        searchState.keywords = $scope.keywords;
-        $location.path("/results");
+    $scope.search = function() {
+        if ($scope.keywords) {
+            searchState.keywords = $scope.keywords;
+            $location.path("/results");
+        }
     };
 
-    $scope.gotoPage = function(page){
+    $scope.gotoPage = function(page) {
         $location.path(page);
     };
 });
@@ -26,24 +28,26 @@ app.controller('SearchResultsController', function($scope, appconf, $route, jwtH
 
     $scope.keywords = searchState.keywords;
 
-    $scope.results = [
-        {
-            "type": "service",
-            "name": "LiFe Service",
-            "active": true
-        },
-        {
-            "type": "dataset",
-            "name": "LiFe Data Set",
-            "active": true
-        },
-        {
-            "type": "paper",
-            "name": "LiFe Paper"
-        }
-    ];
+    $scope.results = [{
+        "type": "service",
+        "name": "LiFe Service",
+        "active": true
+    }, {
+        "type": "dataset",
+        "name": "LiFe Data Set",
+        "active": true
+    }, {
+        "type": "paper",
+        "name": "LiFe Paper"
+    }];
 
-    $scope.search = function(){
+    $scope.search = function() {
+        if(!$scope.keywords)
+        {
+            //no keywords? back to dashboard
+            $location.path("/");
+            return false;
+        }
         searchState.keywords = $scope.keywords;
         $location.path("/results");
     };
