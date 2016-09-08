@@ -8,11 +8,10 @@ body,
 footer,
 html,
 #navbar {
-  background: url("../img/neuronet.jpg");
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-position: center center;
-  background-color: #000; }
+  background-color: #5472B9; }
 
 h2 {
   color: #eee; }
@@ -29,11 +28,10 @@ li.clickable:hover {
 nav.navbar {
   border-bottom: solid #206e26 1px;
   height: 46px;
-  background: url("../img/neuronet.jpg");
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-position: center center;
-  background-color: #000; }
+  background-color: #5472B9; }
   nav.navbar > div {
     height: 46px; }
 

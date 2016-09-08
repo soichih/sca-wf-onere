@@ -1,1 +1,15 @@
 <h1>Dashboard</h1>
+
+<form ng-submit="search()">
+	<input type="text" ng-model="keywords" />
+
+	<button>Submit</button>
+</form>
+
+<div>
+	<h2>Stats</h2>
+</div>
+
+<button ng-click="gotoPage('/submit_dataset')">Submit Dataset</button>
+<button ng-click="gotoPage('/submit_service')">Submit Service</button>
+<button ng-click="gotoPage('/create_project')">Create Project</button>

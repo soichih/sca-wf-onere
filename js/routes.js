@@ -10,6 +10,18 @@ app.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
         templateUrl: 't/dashboard.html',
         controller: 'DashboardController'
     })
+    .when('/results', {
+        templateUrl: 't/results.html',
+        controller: 'SearchResultsController'
+    })
+    .when('/submit_dataset', {
+        templateUrl: 't/submit_dataset.html',
+        controller: 'SubmitDatasetController'
+    })
+    .when('/submit_service ', {
+        templateUrl: 't/submit_dataset.html',
+        controller: 'SubmitDatasetController'
+    })
     // .when('/login', {
     //     templateUrl: 't/login.html',
     //     controller: 'LoginController',

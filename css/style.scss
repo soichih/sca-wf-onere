@@ -8,12 +8,12 @@ $trans_bgcolor: rgba($mid, .9);
 $border: solid $dark 1px;
 $header_height: 46px;
 @mixin bgimage {
-    background: url("../img/neuronet.jpg");
+    // background: url("../img/neuronet.jpg");
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-position: center center;
     // background-size: 100%;
-    background-color: #000; //$bgcolor;
+    background-color: $mid; //$bgcolor;
     // background-blend-mode: screen;
 }
 @mixin text-shadow($blur, $color, $opac) {

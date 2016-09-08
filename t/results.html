@@ -1,0 +1,15 @@
+<h1>Results</h1>
+
+<form ng-submit="search()">
+	<input type="text" ng-model="keywords" />
+
+	<button>Submit</button>
+</form>
+
+<div id="results">
+<ul>
+	<li ng-repeat="result in results">
+		{{result.name}}
+	</li>
+
+</ul>

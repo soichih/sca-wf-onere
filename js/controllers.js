@@ -5,14 +5,49 @@ app.controller('PageController', function($scope, appconf, $route, jwtHelper, $l
     $scope.title = appconf.title;
 });
 
-app.controller('DashboardController', function($scope, appconf, $route, jwtHelper, $location, $http) {
+app.controller('DashboardController', function($scope, appconf, $route, jwtHelper, $location, $http, searchState) {
     $scope.appconf = appconf;
     $scope.title = appconf.title;
+
+    $scope.keywords = searchState.keywords;
+    $scope.search = function(){
+        searchState.keywords = $scope.keywords;
+        $location.path("/results");
+    };
+
+    $scope.gotoPage = function(page){
+        $location.path(page);
+    };
 });
 
-app.controller('SearchResultsController', function($scope, appconf, $route, jwtHelper, $location, $http) {
+app.controller('SearchResultsController', function($scope, appconf, $route, jwtHelper, $location, $http, searchState) {
     $scope.appconf = appconf;
     $scope.title = appconf.title;
+
+    $scope.keywords = searchState.keywords;
+
+    $scope.results = [
+        {
+            "type": "service",
+            "name": "LiFe Service",
+            "active": true
+        },
+        {
+            "type": "dataset",
+            "name": "LiFe Data Set",
+            "active": true
+        },
+        {
+            "type": "paper",
+            "name": "LiFe Paper"
+        }
+    ];
+
+    $scope.search = function(){
+        searchState.keywords = $scope.keywords;
+        $location.path("/results");
+    };
+
 });
 
 //submit pillars
@@ -25,11 +60,7 @@ app.controller('SubmitServiceController', function($scope, appconf, $route, jwtH
     $scope.title = appconf.title;
 });
 
-//combined search results page
-app.controller('SearchResultsController', function($scope, appconf, $route, jwtHelper, $location, $http) {
-    $scope.appconf = appconf;
-    $scope.title = appconf.title;
-});
+
 
 //View the pillars
 app.controller('ViewDatasetController', function($scope, appconf, $route, jwtHelper, $location, $http) {
