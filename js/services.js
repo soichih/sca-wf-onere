@@ -47,6 +47,8 @@ app.factory('instance', function(appconf, $http, jwtHelper, toaster) {
     })
     .then(function(res) {
         if(res.data.count != 0) {
+            console.log("reusing instance");
+            console.dir(res.data.instances[0]);
             return res.data.instances[0];
         } else {
             console.log("creating new instance");

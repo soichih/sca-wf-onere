@@ -20,11 +20,15 @@ app.controller('PageController', function($scope, appconf, $route, jwtHelper, $l
     $http.get($scope.appconf.wf_api+"/resource", {params: {
         find: JSON.stringify({name: "onere"})
     }}).then(function(res) {
-        $scope.resources.onere = res.data;
+        $scope.resources.onere = res.data[0];
+        console.log("onere resource");
+        console.dir($scope.resources.onere);
         $http.get($scope.appconf.wf_api+"/resource/best", {params: {
             service: $scope.appconf.upload_task_id,
         }}).then(function(res) {
-            $scope.resources.upload = res.data;
+            $scope.resources.upload = res.data.resource;
+            console.log("upload resource");
+            console.dir($scope.resources.upload);
         });
     }, console.dir);
 });
@@ -199,11 +203,13 @@ app.controller('SubmitController', function($scope, toaster, instance, $http, $r
                 //  var symlink_task = res.data.task;
                 //  do_import(symlink_task);
 
+                /*
                 //Register with API (TODO: Lookup documentation on this)
                 $http.post($scope.appconf.api+"/register", {
                     instance_id: $scope.instance_id,
                     file: file
                 });
+                */
 
              }, function(res) {
                  if(res.data && res.data.message) toaster.error(res.data.message);
@@ -346,7 +352,7 @@ app.controller('SubmitController', function($scope, toaster, instance, $http, $r
                 //submited dataset copy task.. now I can submit container build task
                 $http.post($scope.appconf.wf_api+"/task", {
                     instance_id: $scope.instance._id,
-                    service: "soichih/sca-service-onere",
+                    service: "soichih/sca-service-onere-build",
                     name: $scope.instance.name,
                     desc: $scope.instance.config.desc,
                     config: {
