@@ -23,6 +23,7 @@ app.controller('DashboardController', function($scope, appconf, $route, jwtHelpe
         datasets: 0
     };
 
+    //this part animates the stat numbers and can be adjusted as needed
     function stat_animation_timeout() {
         var goAgain = false;
         for(var i in $scope.stats)
@@ -40,7 +41,6 @@ app.controller('DashboardController', function($scope, appconf, $route, jwtHelpe
             setTimeout(stat_animation_timeout, 1);
         }
     }
-
     setTimeout(stat_animation_timeout, 100);
 
     $scope.keywords = searchState.keywords;

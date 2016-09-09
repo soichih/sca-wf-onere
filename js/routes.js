@@ -22,9 +22,37 @@ app.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
         templateUrl: 't/submit_dataset.html',
         controller: 'SubmitDatasetController'
     })
-    .when('/submit_service ', {
-        templateUrl: 't/submit_dataset.html',
-        controller: 'SubmitDatasetController'
+    .when('/submit_service', {
+        templateUrl: 't/submit_service.html',
+        controller: 'SubmitServiceController'
+    })
+    .when('/view_dataset', {
+        templateUrl: 't/view_dataset.html',
+        controller: 'ViewDatasetController'
+    })
+    .when('/view_service', {
+        templateUrl: 't/view_service.html',
+        controller: 'ViewServiceController'
+    })
+    .when('/view_resource', {
+        templateUrl: 't/view_resource.html',
+        controller: 'ViewResourceController'
+    })
+    .when('/view_paper', {
+        templateUrl: 't/view_paper.html',
+        controller: 'ViewPaperController'
+    })
+    .when('/view_project', {
+        templateUrl: 't/view_project.html',
+        controller: 'ViewProjectController'
+    })
+    .when('/submit_project', {
+        templateUrl: 't/submit_project.html',
+        controller: 'SubmitProjectController'
+    })
+    .when('/view_user', {
+        templateUrl: 't/view_user.html',
+        controller: 'ViewUserController'
     })
     // .when('/login', {
     //     templateUrl: 't/login.html',
