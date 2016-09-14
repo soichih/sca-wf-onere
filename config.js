@@ -14,10 +14,12 @@ angular.module('app.config', [])
     shared_url: host+'/shared',
 
     auth_api: host+'/api/auth',
-    auth_url: host+'auth',
+    auth_url: host+'/auth',
 
     wf_api: host+'/api/wf',
     sca_api: host+'/api/wf', //deprecated - but a lot of ng components still uses this!
+
+    event_api: '/api/event',
 
     progress_api: host+'/api/progress',
     progress_url: host+'/progress',

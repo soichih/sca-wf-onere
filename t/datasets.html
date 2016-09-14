@@ -1,0 +1,135 @@
+<div class="subbar">
+    <div style="padding-left: 20px; margin-bottom: 10px">
+        <h2>Datasets</h2>
+        <br>
+        <div class="btn-group pull-right" style="left: -20px;top: -5px;">
+            <button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Options <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+            <li><a href="#">Project ABC</a></li>
+            <li><a href="#">Project DEF</a></li>
+            <li><a href="#">Project AAA</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+            </ul>
+        </div>
+        <span class="text-muted">{{datasets.length}} datasets</span>
+    </div>
+    <hr style="margin: 0px;">
+
+    <div class="onere-list">
+        <div class="onere-list-item" 
+            ng-repeat="dataset in datasets" 
+            ng-class="{'active': selected_dataset == dataset}"
+            ng-click="select_dataset(dataset)">
+            <div class="list-header">{{dataset.name||'untitled'}}</div>
+            <small>
+                <time class="text-muted" style="position: relative; top: -4px;">{{dataset.create_date | date}}</time>
+                <p class="text-muted">{{dataset.desc}}</p>
+            </small>
+        </div>
+        <div class="onere-list-addicon" ng-click="add_dataset()">
+            <i class="fa fa-plus-circle" aria-hidden="true"></i> 
+        </div>
+    </div>
+</div>
+<div class="onere-content" ng-if="selected_dataset">
+    <div style="margin-left: 30px; margin-right: 30px;">
+        <h2 style="position: relative; left: -10px;">
+            <i class="fa fa-trash-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
+            <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
+            <i class="fa fa-star-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
+            <i class="fa fa-share-alt" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
+
+            <span class="pull-right" ng-class="{'text-muted':!selected_app.locked}">
+                <!--
+                <input type="checkbox" ng-model="selected_app.locked"> Locked</input>
+                -->
+                <button type="button" class="btn" ng-model="selected_app.locked"> Locked </button>
+            </span>
+        </h2>
+
+        <!--name/desc-->
+        <input type="text" class="header" 
+            ng-change="save_dataset()"
+            ng-model="selected_dataset.name" 
+            placeholder="enter dataset name here .."></input> 
+        <textarea class="desc" 
+            ng-change="save_dataset()"
+            ng-model="selected_dataset.desc"
+            placeholder="enter descriptions here .."></textarea> 
+
+        <!--uploaded files-->
+        <h3>Files</h3>
+        <p class="text-muted">Files will be permanently stored on ONERE public archive</p>
+        <div ng-repeat="file in selected_dataset.config.files" class="file" ng-click="download(file)">
+            <p>
+                <i class="fa fa-file file-icon" aria-hidden="true"></i> 
+                {{file.filename}} 
+                <span class="pull-right">{{file.size|bytes}}</span>
+            </p>
+            <div class="pull-right text-muted">
+                <i class="fa fa-trash-o" aria-hidden="true"></i>
+            </div>
+            <p style="margin-left: 20px;" class="text-muted">
+                <small><b>{{file.mime}}</b> {{file.desc}}</small>
+                <!--{{file.dir}}-->
+            </p>
+        </div>
+
+        <!--importing files-->
+        <div ng-repeat="task in importing_tasks" class="task" ng-if="task.status != 'finished'">
+            <!--
+            <time class="text-muted pull-right">{{task.create_date | date}}</time>
+            -->
+            <h4 ng-if="task.status == 'running_sync' || task.status == 'running' || task.status == 'requested'">
+                <i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i> 
+                Validating <small>{{task.config._filename}}</small>
+            </h4>
+            <h4 ng-if="task.status == 'failed'">
+                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> 
+                Failed <small>{{task.config._filename}}</small>
+            </h4>
+            <p style="margin-left: 30px"><!--<b>{{task.status}}</b> -->{{task.status_msg}}</p>
+            <!-- <pre>{{task|json}}</pre> -->
+        </div>
+
+        <!--uploading files-->
+        <div class="task" ng-if="uploading">
+            <h4><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i> Uploading <small>{{uploading.name}}</small></h4>
+            <p style="margin-left: 30px">{{uploading.progress*100|number:1}}% </p>
+            <!-- redundant with angular upload bar?
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="{{uploading.progress}}"
+                aria-valuemin="0" aria-valuemax="100" style="width:{{uploading.progress*100}}%">
+                {{uploading.progress*100|number:1}}%
+                </div>
+            </div>
+            -->
+        </div>
+
+        <!--new files-->
+        <!--<h4>Upload New Files</h4>-->
+        <button type="file" 
+            ng-if="resources.upload && !uploading"
+            class="btn btn-sm btn-primary"
+
+            accept-dis="image/*" 
+            ngf-max-height-dis="100" 
+
+            ngf-select="uploadFiles($file, $invalidFiles)"
+            ngf-max-size="1GB">
+            <i class="fa fa-plus" aria-hidden="true"></i> Upload New File
+        </button>
+        <p class="alert" ng-if="!resources.upload">You currerntly don't have any resource to upload your files. Please try again later, or contact SCA support.</p>
+
+        <!--debugging..-->
+        <div class="text-muted">
+            <hr style="margin-top: 200px;">
+            <h3>Debug</h3>
+            <pre style="font-size: 60%;">{{selected_dataset|json}}</pre>
+            <pre style="font-size: 60%;">{{importing_tasks|json}}</pre>
+        </div>
+    </div>
+</div>

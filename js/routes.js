@@ -2,14 +2,45 @@
 
 app.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
     $routeProvider
+    /*
     .when('/login', {
         templateUrl: 't/login.html',
         controller: 'LoginController',
     })
-    .when('/about', {
-        templateUrl: 't/about.html',
-        controller: 'AboutController',
+    */
+    .when('/home', {
+        templateUrl: 't/home.html',
+        controller: 'HomeController',
+        requiresLogin: true
     })
+    .when('/projects', {
+        templateUrl: 't/projects.html',
+        controller: 'ProjectsController',
+        requiresLogin: true
+    })
+    .when('/datasets', {
+        templateUrl: 't/datasets.html',
+        controller: 'DatasetsController',
+        requiresLogin: true
+    })
+    .when('/apps', {
+        templateUrl: 't/apps.html',
+        controller: 'AppsController',
+        requiresLogin: true
+    })
+    .when('/runs', {
+        templateUrl: 't/runs.html',
+        controller: 'RunsController',
+        requiresLogin: true
+    })
+
+    .when('/new', {
+        templateUrl: 't/new.html',
+        controller: 'NewController',
+        requiresLogin: true
+    })
+
+    /*
     .when('/submit', {
         templateUrl: 't/submit.html',
         controller: 'SubmitController',
@@ -25,10 +56,6 @@ app.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
         controller: 'SearchController',
         requiresLogin: true
     })
-    .when('/', {
-        templateUrl: 't/home.html',
-        controller: 'HomeController'
-    })
     .when('/main', {
         templateUrl: 't/main.html',
         controller: 'MainController',
@@ -39,8 +66,6 @@ app.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
         controller: 'ContainerController',
         requiresLogin: true
     })
-
-    /*
     .when('/running', {
         templateUrl: 't/tasks.html',
         controller: 'RunningController',
@@ -63,7 +88,7 @@ app.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
     })
     */
     .otherwise({
-        redirectTo: '/'
+        redirectTo: '/home'
     });
     //console.dir($routeProvider);
 }]).run(['$rootScope', '$location', 'toaster', 'jwtHelper', 'appconf', '$http',
@@ -74,9 +99,8 @@ function($rootScope, $location, toaster, jwtHelper, appconf, $http) {
             var jwt = localStorage.getItem(appconf.jwt_id);
             if(jwt == null || jwtHelper.isTokenExpired(jwt)) {
                 toaster.info("Please login first");
-                //sessionStorage.setItem('auth_redirect', window.location.toString());
-                //window.location = appconf.auth_url;
-                $location.path("/login");
+                sessionStorage.setItem('auth_redirect', window.location.toString());
+                window.location = appconf.auth_url;
                 event.preventDefault();
             }
         }

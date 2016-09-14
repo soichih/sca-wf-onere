@@ -1,0 +1,214 @@
+<div class="subbar">
+    <div style="padding-left: 20px; margin-bottom: 10px">
+        <h2>Applications</h2>
+        <br>
+        <div class="btn-group pull-right" style="left: -20px;top: -5px;">
+            <button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Options <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+            <li><a href>Project ABC</a></li>
+            <li><a href>Project DEF</a></li>
+            <li><a href>Project AAA</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href>Separated link</a></li>
+            </ul>
+        </div>
+        <span class="text-muted">{{apps.length}} applications</span>
+    </div>
+    <hr style="margin: 0px;">
+
+    <div class="onere-list">
+        <div class="onere-list-item" 
+            ng-repeat="app in apps" 
+            ng-class="{'active': selected_app == app}"
+            ng-click="select_app(app)">
+
+            <!--application type-->
+            <!--
+            <span ng-if="app.config.type == 'docker'" class="label label-primary pull-right">Docker</span>
+            <span ng-if="app.config.type == 'dockerbuilder'" class="label label-info pull-right">Dockerfile</span>
+            <span ng-if="app.config.type == 'bash'" class="label label-success pull-right">Bash</span>
+            -->
+            <apptype type="app.config.type" class="pull-right"></apptype>
+
+            <div class="list-header">{{app.name||'untitled'}}</div>
+            <small>
+                <time class="text-muted" style="position: relative; top: -4px;">{{app.create_date | date}}</time>
+                <p class="text-muted">{{app.desc}}</p>
+            </small>
+        </div>
+        <div class="onere-list-addicon" ng-click="add_app()">
+            <i class="fa fa-plus-circle" aria-hidden="true"></i> 
+        </div>
+    </div>
+</div>
+<div class="onere-content" ng-if="selected_app">
+    <div style="margin-left: 30px; margin-right: 30px;">
+
+        <h2 style="position: relative; left: -10px;">
+            <i class="fa fa-trash-o" aria-hidden="true" ng-click="delete()"></i>&nbsp;&nbsp;&nbsp;
+            <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
+            <i class="fa fa-star-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
+            <i class="fa fa-share-alt" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
+            <!--
+            <onoffbutton b="selected_app.locked" class="pull-right"></onoffbutton>
+            -->
+        </h2>
+
+        <!--name/desc-->
+        <input type="text" class="header" 
+            ng-change="save_app()"
+            ng-model="selected_app.name" 
+            placeholder="enter app name here .."></input> 
+        <textarea class="desc" 
+            ng-change="save_app()"
+            ng-model="selected_app.desc"
+            placeholder="enter descriptions here .."></textarea> 
+        <br>
+
+        <!--application type-->
+        <div class="row form-group">
+            <div class="col-md-3">
+                <h4>Application Type</h4>
+            </div>
+            <div class="col-md-9">
+                <select class="form-control" style="width: 300px"
+                    ng-change="save_app()"
+                    ng-options="item.id as item.label for item in types"
+                    ng-model="selected_app.config.type" required>
+                </select>
+
+                <!--some help content-->
+                <div class="text-muted" ng-if="selected_app.config.type == 'docker'">
+                    <br>
+                    <img src="img/docker.png" align="right">
+                    <p>Register your application as a docker container that can be executed on a docker engine.</p>
+                    <p>Upon execution, input dataset will be volume mounted on <code>/input</code> as read-only. You can output data to <code>/output</code> and can be exported up to 25 days via ONERE UI.</p>
+                    <p>Container will run with -u uid:gid set to the same user/group ID that is executing container.</p>
+                </div>
+
+                <div class="text-muted" ng-if="selected_app.config.type == 'dockerbuilder'">
+                    <br>
+                    <img src="img/docker.png" align="right">
+                    <p>Register your application in a Dockerfile format that can build your application as a docker container and be executed on a docker engine.</p>
+                    <p>Container will run with -u uid:gid set to the same user/group ID that is executing container.</p>
+                </div>
+
+                <div class="text-muted" ng-if="selected_app.config.type == 'bash'">
+                    <br>
+                    <p>Register your application that can be executed on a typical HPC/HTC system from a bash script.</p>
+                </div>
+
+            </div><!--col-md-9-->
+        </div> 
+
+        <div class="row form-group">
+            <div class="col-md-3">
+                <h4>Resource Type</h4>
+            </div>
+            <div class="col-md-9">
+                <select class="form-control" style="width: 300px"
+                    ng-change="save_app()"
+                    ng-options="id as detail.name for (id, detail) in resource_types"
+                    ng-model="selected_app.config.resource_type" required>
+                </select>
+                <p class="text-muted">Resource where you can execute this service. Only users who have access to specified resource can actually execute.</p>
+            </div><!--col-md-9-->
+        </div> 
+
+        <div ng-if="selected_app.config.type == 'dockerbuilder'">
+            <div class="row form-group">
+                <div class="col-md-3">
+                    <h4>Dockerfile</h4>
+                </div>
+                <div class="col-md-9">
+                    <!--template selector-->
+                    <div class="dropdown pull-right">
+                      <button class="btn btn-xs btn-default dropdown-toggle" type="button" 
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        Use Template <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li ng-repeat="(label, content) in docker_templates">
+                            <a href ng-click="dockerfile_set(content)">{{label}}</a>
+                        </li>
+                        <!--
+                        <li role="separator" class="divider"></li>
+                        <li><a href ng-click="clear()">Clear</a></li>
+                        -->
+                      </ul>
+                    </div>
+
+                    <div ui-ace="{
+                        mode: 'dockerfile',
+                        onChange: save_app,
+                    }" ng-model="selected_app.config.dockerfile"></div>
+                </div>
+            </div><!--form-gruop-->
+
+            <div class="row form-group">
+                <div class="col-md-3">
+                    <h4>Arguments</h4>
+                </div>
+                <div class="col-md-9">
+                    <input type="text" class="form-control"
+                        ng-change="save_app()"
+                        ng-model="selected_app.config.container_arg" 
+                        placeholder=""></input> 
+                    <p class="text-muted">Arguments to pass to your container</p>
+                </div>
+            </div> 
+        </div>
+
+        <div ng-if="selected_app.config.type == 'docker'">
+            <div class="row form-group">
+                <div class="col-md-3">
+                    <h4>Container Name</h4>
+                </div>
+                <div class="col-md-9">
+                    <input type="text" class="form-control"
+                        ng-change="save_app()"
+                        ng-model="selected_app.config.container" 
+                        placeholder="[registry/]namespace/reponame[:tag]" required></input> 
+                </div>
+            </div> 
+
+            <div class="row form-group">
+                <div class="col-md-3">
+                    <h4>Arguments</h4>
+                </div>
+                <div class="col-md-9">
+                    <input type="text" class="form-control"
+                        ng-change="save_app()"
+                        ng-model="selected_app.config.container_arg" 
+                        placeholder=""></input> 
+                    <p class="text-muted">Arguments to pass to your container</p>
+                </div>
+            </div> 
+        </div><!--sca-service-docker-->
+
+        <div ng-if="selected_app.config.type == 'bash'">
+            <div class="row form-group">
+                <div class="col-md-3">
+                    <h4>Bash Script</h4>
+                </div>
+                <div class="col-md-9">
+                    <div ui-ace="{
+                        mode: 'bash',
+                        onChange: save_app,
+                    }" ng-model="selected_app.config.bash"></div>
+                    <p>You can git clone your application, or download script hosted on your server.</p>
+                    <p>Input dataset will be stored in a directory specified by environment parameter <code>$INPUT</code>. Output file should be generated in a working directory.</p>
+                </div>
+            </div> 
+        </div><!--sca-service-bash-->
+
+        <!--debugging..-->
+        <div class="text-muted">
+            <hr style="margin-top: 200px;">
+            <h3>Debug</h3>
+            <pre style="font-size: 60%;">{{selected_app|json}}</pre>
+        </div>
+    </div>
+</div>

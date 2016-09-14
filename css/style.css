@@ -1,46 +1,283 @@
 body {
-  background-color: #eee;
-  padding-top: 46px; }
-  body > div {
-    background-color: rgba(84, 114, 185, 0.9); }
-
-body,
-footer,
-html,
-#navbar {
-  background: url("../img/neuronet.jpg");
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-color: #000; }
-
+    backgroud-color: #eee;
+    color: #383838;
+    font-size: 14px;
+}
+h2, h3 {
+    color: #878787;
+    text-transform: uppercase;
+    font-weight: bold;
+}
 h2 {
-  color: #eee; }
+    font-size: 21px;
+}
+h3 {
+    font-size: 18px;
+}
+hr {
+    border-top: 1px solid #eee;
+}
+.form-control {
+    padding: 4px 6px;
+    height: inherit;
+}
+.fixed-top {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 999;
+    width: 100%;
+}
+.onere-page {
+    margin-left: 80px;
+}
+.sca-sidebar {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 999;
+    width: 80px;
+    height: 100%;
 
-.container .page {
-  background-color: #eee;
-  box-shadow: 0 0 5px #5472B9;
-  padding: 20px; }
+    background-color: #fcfcfc;
+    /*box-shadow: 2px 0px 2px #eee;*/
+    border-right: 1px solid #eee;
+    text-align: center;
+}
+.sca-sidebar .menu {
+    color: #bbb;
+    width: 80px;
+    transition: 0.5s ease all;
+    cursor: pointer;
+    margin: 3px 0px;
+    padding: 8px;
+    font-size: 8pt;
+}
+.sca-sidebar .menu h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    color: #777;
+}
+.sca-sidebar .menu:hover {
+    background-color: #ddd;
+    color: #008cba;
+}
+.sca-sidebar .menu:hover h3 {
+    color: #008cba;
+}
+.sca-sidebar .menu.active {
+    background-color: #008cba;
+    color: white;
+}
+.sca-sidebar .menu.active h3 {
+    color: white;
+}
+.sca-sidebar .bottom {
+    position: fixed;
+    bottom: 0px;
+    width: 80px;
+}
+.sca-sidebar hr {
+    margin: 5px 0px;
+}
+/*
+#settings-menu {
+    position: fixed;
+    bottom: 5px;
+    left: 80px;
+    z-index: 999;
+    width: 150px;
+    height: 100px;
 
-li.clickable:hover {
-  cursor: pointer;
-  background-color: #ddd !important; }
+    background-color: white;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+#settings-menu .menu {
+    display: block;
+    width: 100%;
+    font-size: 12pt;
+    text-decoration: none;
+    padding: 10px;
+}
+#settings-menu .menu:hover {
+    background-color: #ddd;
+    color: #008cba;
+}
+*/
+.onere-search-area {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 100;
+    background-color: white;
 
-nav.navbar {
-  border-bottom: solid #206e26 1px;
-  height: 46px;
-  background: url("../img/neuronet.jpg");
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-color: #000; }
-  nav.navbar > div {
-    height: 46px; }
+    width: 100%;
+    font-size: 30px;
+    padding: 20px 20px 20px 100px;
+    /*background-color: #f0f0f0;*/
+}
+.onere-search-area input {
+    width: 100%;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid #eee;
+    /*
+    border-radius: 5px;
+    */
+    padding: 5px 10px 5px 60px;
+}
+.onere-search-area .onere-search-icon {
+    position: fixed;
+    top: 35px;
+    left: 115px;
+}
+/*
+.onere-search-area .onere-search-clear {
+    position: fixed;
+    top: 350px;
+    right: 40px;
+    cursor: pointer;
+    background-color: red;
+    z-index: 200;
+}
+*/
+.subbar {
+    position: fixed;
+    top: 0;
+    left: 80px;
+    z-index: 998;
+    width: 350px;
+    height: 100%;
+    
+    border-right: 1px solid #eee;
+}
+.onere-list {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    width: 350px;
+    position: fixed;
+    top: 108px;
+    bottom: 0px;
+}
+.onere-list .onere-list-item {
+    padding: 5px 20px;
+    box-sizing: border-box;
+    border: 3px solid transparent;
+    box-shadow: 0px -1px 1px #eee;
+}
+.onere-list .onere-list-item:hover {
+    cursor: pointer;
+    background-color: #eee;
+}
 
-footer > div {
-  padding-bottom: 2em;
-  margin-top: 2em;
-  padding-top: 1em;
-  border-top: solid #206e26 1px;
-  color: #eee;
-  text-shadow: 0 1px 1px black, 0px -1px 1px black, 1px 0px 1px black, -1px 0px 1px black, 1px 1px 1px black, 1px -1px 1px black, -1px 1px 1px black, -1px -1px 1px black; }
+.onere-list .onere-list-addicon {
+    font-size: 50px;
+    position: fixed;
+    bottom: 10px;
+    left: 350px;
+    cursor: pointer;
+    color: #999;
+    background-color: white;
+    border-radius: 25px;
+    line-height: 100%;
+
+    transition: 0.2s ease all;
+}
+.onere-list .onere-list-addicon:hover {
+    font-size: 70px;
+    bottom: 0px;
+    left: 340px;
+    color: #008cba;
+}
+.onere-list .active {
+    /*
+    background-color: #f8f8f8;
+    border: 3px solid #008cba;
+    */
+    border: 3px solid #ddd;
+}
+.onere-list .onere-list-item .list-header {
+    font-size: 16px;
+    font-weight: 400;
+    color: #666;
+    margin-bottom: 0px;
+}
+
+
+.onere-content {
+    margin-left: 350px;
+    overflow-x: hidden;
+}
+input.header {
+    font-size: 18pt;
+    margin: 5px 10px 5px 0px;
+    padding: 5px;
+    border: none;
+    border-bottom: 1px solid #eee;
+    width: 100%;
+    color: #008cba;
+}
+textarea.desc {
+    width: 100%;
+    padding: 5px;
+    border: none;
+    height: 75px;
+    /* border-bottom: 1px solid #eee;*/
+}
+.task,
+.file {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+.file {
+    border-left: 30px solid #ddd;
+}
+.file:hover {
+    cursor: pointer;
+    background-color: #eee;
+}
+.file .file-icon {
+    position: relative;
+    left: -30px;
+    color: white;
+}
+.ace_editor {
+    height: 200px;
+}
+.form-group h4 {
+    margin-top: 4px;
+}
+i[ng-click]:hover {
+    cursor: pointer;
+    color: #008cba;
+}
+
+.onere-home-addicon {
+    font-size: 50px;
+    position: fixed;
+    bottom: 10px;
+    right: 50px;
+    cursor: pointer;
+    color: #999;
+    background-color: white;
+    border-radius: 25px;
+    line-height: 100%;
+
+    transition: 0.2s ease all;
+}
+.onere-home-addicon:hover {
+    font-size: 70px;
+    bottom: 0px;
+    right: 40px;
+    color: #008cba;
+}
+.onere-table h5 {
+    margin: 0px;
+    margin-bottom: 5px;
+}
+.appdata-name {
+    color: #008cba;
+    font-weight: bold;
+}

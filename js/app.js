@@ -3,16 +3,19 @@
 var app = angular.module('app', [
     'app.config',
     'ngRoute',
-    //'ngAnimate',
-    //'ngCookies',
+    'ngAnimate',
+    'ngCookies',
     'toaster',
     'angular-loading-bar',
     'angular-jwt',
+    'ngSanitize', //used by ui-select (sometimes?)
     'ui.bootstrap',
     'ui.bootstrap.tooltip',
     'ui.select',
     'sca-ng-wf',
+    'sca-shared',
     'sca-product-raw',
+    'ui.ace',
 ]);
 
 //can't quite do the slidedown animation through pure angular/css.. borrowing slideDown from jQuery..
@@ -51,13 +54,58 @@ app.config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
 }]);
 
 //configure httpProvider to send jwt unless skipAuthorization is set in config (not tested yet..)
-app.config(['appconf', '$httpProvider', 'jwtInterceptorProvider', 
-function(appconf, $httpProvider, jwtInterceptorProvider) {
-    jwtInterceptorProvider.tokenGetter = function(jwtHelper, config, $http) {
+app.config(function(appconf, $httpProvider, jwtInterceptorProvider) {
+    jwtInterceptorProvider.tokenGetter = function(jwtHelper, $http) {
         //don't send jwt for template requests (I don't think angular will ever load css/js - browsers do)
-        if (config.url.substr(config.url.length - 5) == '.html') return null;
-        return localStorage.getItem(appconf.jwt_id);
+        //if (config.url.substr(config.url.length - 5) == '.html') return null;
+        var jwt = localStorage.getItem(appconf.jwt_id);
+        var expdate = jwtHelper.getTokenExpirationDate(jwt);
+        var ttl = expdate - Date.now();
+        if(ttl < 0) {
+            localStorage.removeItem(appconf.jwt_id);
+            document.location = appconf.auth_url;
+        }
+        return jwt;
     }
     $httpProvider.interceptors.push('jwtInterceptor');
-}]);
+});
+
+/*
+//load menu and profile by promise chaining
+app.factory('menu', function(appconf, $http, jwtHelper, $sce, scaMessage, scaMenu, toaster) {
+    var jwt = localStorage.getItem(appconf.jwt_id);
+    var menu = {
+        header: {
+        },
+        top: scaMenu,
+        user: null, //to-be-loaded
+    };
+    if(appconf.icon_url) menu.header.icon = $sce.trustAsHtml("<img src=\""+appconf.icon_url+"\">");
+    if(appconf.home_url) menu.header.url = appconf.home_url
+    var jwt = localStorage.getItem(appconf.jwt_id);
+    if(jwt) {
+        var expdate = jwtHelper.getTokenExpirationDate(jwt);
+        var ttl = expdate - Date.now();
+        if(ttl < 0) {
+            toaster.error("Your login session has expired. Please re-sign in");
+            localStorage.removeItem(appconf.jwt_id);
+        } else {
+            menu.user = jwtHelper.decodeToken(jwt);
+            if(ttl < 3600*1000) {
+                //jwt expring in less than an hour! refresh!
+                console.log("jwt expiring in an hour.. refreshing first");
+                $http({
+                    url: appconf.auth_api+'/refresh',
+                    method: 'POST'
+                }).then(function(response) {
+                    var jwt = response.data.jwt;
+                    localStorage.setItem(appconf.jwt_id, jwt);
+                    menu.user = jwtHelper.decodeToken(jwt);
+                });
+            }
+        }
+    }
+    return menu;
+});
+*/
 

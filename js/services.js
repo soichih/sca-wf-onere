@@ -1,11 +1,13 @@
 'use strict';
 
 //load menu and profile by promise chaining
-app.factory('menu', function(appconf, $http, jwtHelper, $sce, toaster) {
+app.factory('menu', function(appconf, $http, jwtHelper, $sce, toaster, scaMenu) {
+    console.log("menu loading");
     var jwt = localStorage.getItem(appconf.jwt_id);
     var menu = {
         header: {
         },
+        top: scaMenu,
         user: null, //to-be-loaded
     };
     if(appconf.icon_url) menu.header.icon = $sce.trustAsHtml("<img src=\""+appconf.icon_url+"\">");

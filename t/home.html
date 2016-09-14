@@ -1,14 +1,54 @@
-<div class="container">
-	<h2>Welcome to ONERE</h2>
-	<div class="page">
-		<p>
-			<p>In sit consectetur officia fugiat officia exercitation cupidatat dolor aliquip
-				ut non. Cillum tempor fugiat do nulla duis ex cillum eu commodo ea dolor laboris
-				cillum. Enim Lorem ad pariatur nisi quis labore magna fugiat commodo et est ullamco
-				duis dolore est magna. Incididunt et voluptate eiusmod sunt ut cillum deserunt
-				irure minim velit.</p>
-
-				<p><a href="#/login">Login to get started</a></p>
-		</p>
-	</div>
+<div class="onere-search-area">
+    <i class="fa fa-search onere-search-icon text-muted" 
+        aria-hidden="true"></i>
+    <!--
+    <i class="fa fa-times-circle-o onere-search-clear text-muted" 
+        ng-if="searchterm" 
+        ng-click="clear_searchterm()" 
+        aria-hidden="true"></i>
+    -->
+    <input type="text" 
+        placeholder="search datasets / code / projects, etc.. " 
+        ng-change="update_search()"
+        onfocus="this.placeholder = ''" 
+        ng-model="searchterm"></input>
+</div>
+<div class="container-fluid" style="margin-top: 93px">
+    <h2>ONERE Registrations</h2>
+    <table class="table table-condensed onere-table">
+        <thead>
+        <tr class="text-muted">
+            <th width="35%">Entry Name</th>
+            <th width="25%">Dataset</th>
+            <th width="25%">Application</th>
+            <th>Publications</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="appdata in appdatas">
+            <td>
+                <h5 class="appdata-name">
+                    {{appdata.name}}
+                </h5>
+                <small class="text-muted">doi:10.1234/onere.{{appdata._id}}</small>
+                <p class="text-muted">{{appdata.desc}}</p>
+            </td>
+            <td>
+                <h5>{{appdata.dataset_id.name}}</h5>
+                <p class="text-muted">{{appdata.dataset_id.desc}}</p>
+            </td>
+            <td>
+                <apptype type="appdata.application_id.config.type" class="pull-right"></apptype>
+                <h5>{{appdata.application_id.name}}</h5>
+                <p class="text-muted">{{appdata.application_id.desc}}</p>
+            </td>
+            <td>
+            <p class="text-muted">None</p>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="onere-home-addicon" ng-click="add()">
+        <i class="fa fa-plus-circle" aria-hidden="true"></i> 
+    </div>
 </div>

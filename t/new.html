@@ -1,0 +1,68 @@
+<div class="container-fluid">
+    <!--
+    <h2 style="position: relative; left: -10px;">
+        <i class="fa fa-trash-o" aria-hidden="true" ng-click="delete()"></i>&nbsp;&nbsp;&nbsp;
+        <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
+        <i class="fa fa-star-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
+        <i class="fa fa-share-alt" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
+    </h2>
+    -->
+    <!--toolbar-->
+   
+    <div class="row">
+    <div class="col-md-8">
+        <h2>
+            <i class="fa fa-times pull-right" aria-hidden="true" ng-click="back()"></i>
+        </h2>
+        <h2>ONERE Registration</h2>
+        <!--
+        <p class="text-muted pull-right">doi: <b>10.12345/onere.tdb</b></p>
+        -->
+        <form ng-submit="submit()">
+            <div class="form-group">
+                <!--name/desc-->
+                <input type="text" class="header" 
+                    required
+                    ng-change="save_app()"
+                    ng-model="form.name" 
+                    placeholder="Enter a name for this entry .."></input> 
+            </div>
+            <div class="form-group">
+                <textarea class="desc" 
+                    ng-change="save_app()"
+                    ng-model="form.desc"
+                    placeholder="Enter descriptions here .."></textarea> 
+            </div>
+            <div class="form-group">
+                <h4>Dataset</h4>
+                <select ng-model="form.dataset_id" 
+                    ng-options="dataset._id as dataset.name for dataset in datasets track by dataset._id" class="form-control" required>
+                    <option></option><!--needed to make required work-->
+                </select>
+                <p class="text-muted">You can register new datasets on datasets page.</p>
+            </div>
+            <div class="form-group">
+                <h4>Application</h4>
+                <select ng-model="form.application_id" 
+                    ng-options="app._id as app.name for app in applications track by app._id" class="form-control" required>
+                    <option></option><!--needed to make required work-->
+                </select>
+                <p class="text-muted">You can register new application on apps page.</p>
+            </div>
+
+            <hr>
+            <button type="submit" class="btn btn-primary pull-right">Submit</button>
+        </form>
+    </div>
+    <div class="col-md-4">
+        <!-- spaceholder-->
+    </div>
+    </div><!--row-->
+
+    <!--debugging..-->
+    <div class="text-muted">
+        <hr style="margin-top: 200px;">
+        <h3>Debug</h3>
+        <pre style="font-size: 60%;">{{form|json}}</pre>
+    </div>
+</div>
