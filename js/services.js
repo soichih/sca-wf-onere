@@ -38,6 +38,23 @@ app.factory('menu', function(appconf, $http, jwtHelper, $sce, toaster, scaMenu) 
     return menu;
 });
 
+app.factory('profile', function(appconf, $http) {
+    var profile_cache = {};
+    return {
+        get: function(id) {
+            if(profile_cache[id] === undefined) {
+                profile_cache[id] = {};
+                //$http.get(appconf.auth_api+"/profile/"+id)
+                $http.get(appconf.auth_api+"/profile/"+id)
+                .then(function(res) {
+                    for(var key in res.data) profile_cache[id][key] = res.data[key];
+                });
+            }
+            return profile_cache[id];
+        }
+    }
+});
+
 //return singleton instance or create new one if it doesn't exist yet
 app.factory('instance', function(appconf, $http, jwtHelper, toaster) {
     //console.log("getting test instance");
@@ -78,5 +95,32 @@ app.factory('instance', function(appconf, $http, jwtHelper, toaster) {
 app.factory('searchState', function(){
     return {
         keywords: ""
+    }
+});
+
+app.factory('onere', function($http, appconf) {
+    return {
+        //execute onere execution workflow
+        execute: function(appdata, instance) {
+            console.log("running appdata!");
+            console.dir(appdata);
+            
+            //step 1.. stage the onere input dataset(s?)
+            return $http.post(appconf.wf_api+"/task", { 
+                instance_id: instance._id,
+                name: "_execute", //important - so that I can query for all onere executionsj
+                service: "soichih/sca-service-onere",
+                //deps: deps||[],
+                config: {
+                }
+            })
+            .then(function(res) {
+                var task = res.data.task;
+                return task;
+            }, function(res) {
+                if(res.data && res.data.message) toaster.error(res.data.message);
+                else toaster.error(res.statusText);
+            });
+        }
     }
 });

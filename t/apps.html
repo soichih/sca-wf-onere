@@ -35,7 +35,7 @@
             <div class="list-header">{{app.name||'untitled'}}</div>
             <small>
                 <time class="text-muted" style="position: relative; top: -4px;">{{app.create_date | date}}</time>
-                <p class="text-muted">{{app.desc}}</p>
+                <p class="">{{app.desc|cut:true:200:' ...'}}</p>
             </small>
         </div>
         <div class="onere-list-addicon" ng-click="add_app()">
@@ -64,7 +64,7 @@
         <textarea class="desc" 
             ng-change="save_app()"
             ng-model="selected_app.desc"
-            placeholder="enter descriptions here .."></textarea> 
+            placeholder="enter application summary here .."></textarea> 
         <br>
 
         <!--application type-->
@@ -77,12 +77,13 @@
                     ng-change="save_app()"
                     ng-options="item.id as item.label for item in types"
                     ng-model="selected_app.config.type" required>
+                    <option></option><!--needed to make required work-->
                 </select>
 
                 <!--some help content-->
                 <div class="text-muted" ng-if="selected_app.config.type == 'docker'">
                     <br>
-                    <img src="img/docker.png" align="right">
+                    <img width="200px" src="img/docker.png" align="right">
                     <p>Register your application as a docker container that can be executed on a docker engine.</p>
                     <p>Upon execution, input dataset will be volume mounted on <code>/input</code> as read-only. You can output data to <code>/output</code> and can be exported up to 25 days via ONERE UI.</p>
                     <p>Container will run with -u uid:gid set to the same user/group ID that is executing container.</p>
@@ -112,6 +113,7 @@
                     ng-change="save_app()"
                     ng-options="id as detail.name for (id, detail) in resource_types"
                     ng-model="selected_app.config.resource_type" required>
+                    <option></option><!--needed to make required work-->
                 </select>
                 <p class="text-muted">Resource where you can execute this service. Only users who have access to specified resource can actually execute.</p>
             </div><!--col-md-9-->
@@ -156,7 +158,7 @@
                         ng-change="save_app()"
                         ng-model="selected_app.config.container_arg" 
                         placeholder=""></input> 
-                    <p class="text-muted">Arguments to pass to your container</p>
+                    <p class="text-muted">Arguments to passed to your container (will override CMD on Dockerfile)</p>
                 </div>
             </div> 
         </div>
@@ -198,11 +200,19 @@
                         mode: 'bash',
                         onChange: save_app,
                     }" ng-model="selected_app.config.bash"></div>
-                    <p>You can git clone your application, or download script hosted on your server.</p>
-                    <p>Input dataset will be stored in a directory specified by environment parameter <code>$INPUT</code>. Output file should be generated in a working directory.</p>
+                    <div class="text-muted">
+                        <p>You can git clone your application, or download script hosted on your server.</p>
+                        <p>Input dataset will be stored in a directory specified by environment parameter <code>$INPUT</code>. Output file should be generated in a working directory.</p>
+                    </div>
                 </div>
             </div> 
         </div><!--sca-service-bash-->
+
+        <h3>Citation</h3>
+        <blockquote class="well">
+            Doe, John. (2016); {{selected_app.name}}. ONERE Application.
+            <small>doi:10.12345/onere.{{selected_app._id}}</small>
+        </blockquote>
 
         <!--debugging..-->
         <div class="text-muted">

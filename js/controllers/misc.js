@@ -79,59 +79,55 @@ app.controller('RunsController', function($scope, toaster) {
     $scope.$parent.active_menu = "runs";
 });
 
-//new appdata
-app.controller('NewController', function($scope, toaster, $window, $http, $location) {
-    $scope.$parent.active_menu = "new";
+app.controller('ViewappdataController', function($scope, toaster, $window, $http, $location, $routeParams, onere) {
+    $scope.$parent.active_menu = "home";
+
+    var appdata_id = $routeParams.id;
+
+    /*
+    disqus_config = function () {
+        this.page.url = "https://soichi7.ppa.iu.edu/wfui/onere";
+        this.page.identifier = "appdata/"+appdata_id;
+    };
+    */
+    
+    //load appdata specified
+    $http.get($scope.appconf.api+"/appdata/"+appdata_id)
+    .then(function(res) {
+        $scope.appdata = res.data;
+    }, function(res) {
+        if(res.data && res.data.message) toaster.error(res.data.message);
+        else toaster.error(res.statusText);
+    });
     $scope.back = function() {
-        $window.history.back();
+        $location.path("/home");
     }
 
-    //defaults
-    $scope.form = {
-        //name: ""
-    };
-    
-    //load datasets
-    $http.get($scope.appconf.api+"/dataset", { params: {
-        sort: '-create_date', //newer ones first
-        select: 'name desc create_date',
+    $scope.download = function(file) {
+        var path = encodeURIComponent(file.dir+"/"+file.filename);
+        var jwt = localStorage.getItem($scope.appconf.jwt_id);
+        console.dir($scope.resources.onere._id);
+        document.location = $scope.appconf.wf_api+"/resource/download?r="+$scope.resources.onere._id+"&p="+path+"&at="+jwt;
+    }
+    $scope.edit = function() {
+        $location.path("/appdata/"+appdata_id);
+    }
 
-        //TODO - I will probably allow datasets from user's projects
-        find: JSON.stringify({
-            user_id: $scope.user.sub
-        })
-    }})
-    .then(function(res) {
-        $scope.datasets = res.data.datasets;
-    }, function(res) {
-        if(res.data && res.data.message) toaster.error(res.data.message);
-        else toaster.error(res.statusText);
-    });
-    
-    //load applications
-    $http.get($scope.appconf.api+"/application", { params: {
-        sort: '-create_date', //newer ones first
-        select: 'name desc create_date',
-
-        //TODO - I will probably allow datasets from user's projects
-        find: JSON.stringify({
-            user_id: $scope.user.sub
-        })
-    }})
-    .then(function(res) {
-        $scope.applications = res.data.applications;
-    }, function(res) {
-        if(res.data && res.data.message) toaster.error(res.data.message);
-        else toaster.error(res.statusText);
+    //doesn't work.. need more work
+    DISQUS.reset({
+      reload: true,
+      config: function () {  
+        console.log("resetting disqus "+appdata_id);
+        this.page.identifier = appdata_id;
+        this.page.url = "https://soichi7.ppa.iu.edu/wfui/onere/";
+      }
     });
 
-    $scope.submit = function(form) {
-        $http.post($scope.appconf.api+"/appdata", $scope.form)
-        .then(function(res) {
-            $location.path("/home");
-        }, function(res) {
-            if(res.data && res.data.message) toaster.error(res.data.message);
-            else toaster.error(res.statusText);
+    $scope.execute = function() {
+        if(!$scope.selected) return; //app not yet selected
+        onere.execute($scope.selected).then(function(onere_task) {
+            toaster.success("Submitted a new onere execution");
+            $location.path("#/execute/"+onere_task._id);
         });
     }
 });

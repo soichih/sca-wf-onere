@@ -20,6 +20,7 @@ angular.module('app.config', [])
     sca_api: host+'/api/wf', //deprecated - but a lot of ng components still uses this!
 
     event_api: '/api/event',
+    //profile_api: '/api/profile',
 
     progress_api: host+'/api/progress',
     progress_url: host+'/progress',

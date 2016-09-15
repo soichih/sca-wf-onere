@@ -2,14 +2,18 @@
 
 ONERE Workflow UI
 
-## Workflows:
+# TODO
 
-There are two workflows depending on whether a user wants to find an existing container or create a new container.
+Allow multiple datasets to be selected for app/data. App should be updated to allow multiple input datasets like
 
-### Path 1 - Search:
+/input/<dataset1>/file1.dat
+/input/<dataset2>/file1.dat
+etc..
 
-Landing Page -> Login -> Search -> Search Results -> Run Container Page
+Or..
 
-### Path 2 - Create:
+/input_<dataset1>/file1.dat?
+/input_<dataset2>/file1.dat?
 
-Landing Page -> Login -> Create New Container -> Add description, selection/upload data, choose applications -> Build Progress screen -> Run Container Page
+
+

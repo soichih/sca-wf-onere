@@ -11,7 +11,6 @@ app.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
     .when('/home', {
         templateUrl: 't/home.html',
         controller: 'HomeController',
-        requiresLogin: true
     })
     .when('/projects', {
         templateUrl: 't/projects.html',
@@ -33,13 +32,16 @@ app.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
         controller: 'RunsController',
         requiresLogin: true
     })
-
-    .when('/new', {
-        templateUrl: 't/new.html',
-        controller: 'NewController',
+    .when('/appdata', {
+        templateUrl: 't/appdata.html',
+        controller: 'AppdataController',
         requiresLogin: true
     })
-
+    .when('/view/appdata/:id', {
+        templateUrl: 't/viewappdata.html',
+        controller: 'ViewappdataController',
+    })
+ 
     /*
     .when('/submit', {
         templateUrl: 't/submit.html',

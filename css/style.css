@@ -17,6 +17,9 @@ h3 {
 hr {
     border-top: 1px solid #eee;
 }
+blockquote {
+    font-size: 13px;
+}
 .form-control {
     padding: 4px 6px;
     height: inherit;
@@ -25,8 +28,9 @@ hr {
     position: fixed;
     top: 0px;
     left: 0px;
-    z-index: 999;
+    z-index: 100;
     width: 100%;
+    background-color: white;
 }
 .onere-page {
     margin-left: 80px;
@@ -39,7 +43,7 @@ hr {
     width: 80px;
     height: 100%;
 
-    background-color: #fcfcfc;
+    background-color: #f0f0f0;
     /*box-shadow: 2px 0px 2px #eee;*/
     border-right: 1px solid #eee;
     text-align: center;
@@ -117,6 +121,7 @@ hr {
     padding: 20px 20px 20px 100px;
     /*background-color: #f0f0f0;*/
 }
+
 .onere-search-area input {
     width: 100%;
     border: none;
@@ -222,8 +227,9 @@ textarea.desc {
     width: 100%;
     padding: 5px;
     border: none;
-    height: 75px;
+    height: 100px;
     /* border-bottom: 1px solid #eee;*/
+    font-size: 13px;
 }
 .task,
 .file {
@@ -249,8 +255,10 @@ textarea.desc {
 .form-group h4 {
     margin-top: 4px;
 }
-i[ng-click]:hover {
+[ng-click]:hover {
     cursor: pointer;
+}
+i[ng-click]:hover {
     color: #008cba;
 }
 
@@ -280,4 +288,26 @@ i[ng-click]:hover {
 .appdata-name {
     color: #008cba;
     font-weight: bold;
+    padding-bottom: 8px;
+    margin-bottom: 0px;
+}
+.onere-contacts {
+    list-style: none;
+    padding-left: 0; 
+}
+
+scaprofile {
+    display: inline-block;
+    /*
+    font-size:85%;
+    background-color: #f0f0f0;
+    padding: 3px 8px;
+    margin: 2px;
+    color: #666;
+    font-weight: bolder;
+    */
+}
+.section {
+border-left: 4px solid #ccc;
+padding-left: 15px;
 }

@@ -20,11 +20,11 @@ app.controller('HomeController', function($scope, toaster, $http, $timeout, $loc
     search_appdata();
 
     function search_appdata() {
-        //load apps
+        //load appdatas
         var query = {
             sort: '-create_date', //newer ones first
-            select: 'name desc application_id dataset_id create_date',
-            limit: 50,
+            select: 'name desc user_id application_id dataset_id project_id create_date',
+            limit: 500,
         }
         if($scope.searchterm) {
             query.find = JSON.stringify({
@@ -44,6 +44,9 @@ app.controller('HomeController', function($scope, toaster, $http, $timeout, $loc
     
     $scope.add = function() {
         $location.path("/new");
+    }
+    $scope.open = function(appdata) {
+        $location.path("/view/appdata/"+appdata._id);
     }
 });
 

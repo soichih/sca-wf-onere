@@ -1,11 +1,26 @@
 'use strict';
 
-app.controller('DatasetsController', function($scope, toaster, $http, $timeout) {
+app.controller('DatasetsController', function($scope, toaster, $http, $timeout, $modal) {
     $scope.$parent.active_menu = "datasets";
 
     $scope.importing_tasks = []; //files currently imported
     $scope.selected_dataset = null; //dataset that user is viewing..
     $scope.uploading = null; //files currently uploaded
+
+    //from https://crcns.org
+    $scope.available_tags = [
+        "visual-cortex", 
+        "auditory-cortex", 
+        "frontal-cortex",
+        "prefrontal-cortex",
+        "motor-cortex",
+        "somatosensory-cortex",
+        "orbitofrontal-cortex",
+        "hippocampus",
+        "thalamus",
+        "retina",
+        "lgn",
+    ];
 
     $scope.$on("task_updated", function(evt, task) {
         $scope.importing_tasks.forEach(function(mytask) {
@@ -121,29 +136,6 @@ app.controller('DatasetsController', function($scope, toaster, $http, $timeout) 
             };
             var path = $scope.instance._id+"/_upload/"+file.name;
 
-            /*
-            file.upload = Upload.upload({
-                url: $scope.appconf.wf_api+"/resource/upload/"+$scope.resources.upload._id+"/"+btoa(path), 
-                fields: {
-                    "Content-Type": file.type
-                },
-                file: file,
-            });
-            file.upload.then(function(res) {
-                //success
-                $scope.uploading = null;
-                validate_and_import(selected_dataset, file.name);
-            }, function(res) {
-                $scope.uploading = null;
-                if(res.data && res.data.message) toaster.error(res.data.message);
-                else toaster.error(res.statusText);
-            }, function(evt) {
-                //progress
-                $scope.uploading.progress = evt.loaded / evt.total;
-                //console.dir(evt);
-            });
-            */
-
             var xhr = new XMLHttpRequest();
             xhr.open("POST", $scope.appconf.wf_api+"/resource/upload/"+$scope.resources.upload._id+"/"+btoa(path));
             var jwt = localStorage.getItem($scope.appconf.jwt_id);
@@ -154,9 +146,15 @@ app.controller('DatasetsController', function($scope, toaster, $http, $timeout) 
             }, false);
             xhr.addEventListener("load", function(evt) {
                 $scope.uploading = null;
-                validate_and_import(selected_dataset, file.name);
+                validate_and_import(file.name, {
+                    import: {
+                        dataset_id: selected_dataset._id,
+                        path: "../_upload/"+file.name,
+                    }
+                });
             }, false);
             xhr.send(file);
+            $scope.uploading.progress = 0;
 
         } else {
             toaster.error("File type not allowed"); //TODO - is this the correct error scenario for this?
@@ -172,33 +170,89 @@ app.controller('DatasetsController', function($scope, toaster, $http, $timeout) 
 
     var getAbsoluteUrl = (function() {
         var a;
-
         return function(url) {
             if(!a) a = document.createElement('a');
             a.href = url;
-
             return a.href;
         };
     })();
 
-    function validate_and_import(dataset, filename) {
-        //submit validate & import service based on file type
-        $http.post($scope.appconf.wf_api+"/task", {
+    //open dialog to enter URL
+    $scope.start_download = function() {
+        //open dialog
+        var urldownload = $modal.open({
+            templateUrl: "t/urldownload.modal.html",
+            controllerAs: '$ctrl',
+            controller: function($modalInstance) {
+                var $ctrl = this;
+                $ctrl.ok = function() {
+                    if($ctrl.url) $modalInstance.close($ctrl.url);
+                }
+                $ctrl.cancel = function() {
+                    $modalInstance.dismiss('cancel');
+                }
+            },
+            //size: 'lg',
+        });
+        //do download
+        urldownload.result.then(function(url) {
+            //first use sca-product-raw service to download a file
+            $http.post($scope.appconf.wf_api+"/task", { 
+                instance_id: $scope.instance._id,
+                name: "_downloading", 
+                service: "soichih/sca-product-raw",
+                config: {
+                    "download": [
+                        {"dir": ".", "url": url},
+                    ]
+                }
+            })
+            .then(function(res) {
+                var download_task = res.data.task;
+                //then submit the sca-service-onere to validate and import
+                //grab filename out of url
+                var split_url = url.split('/');
+                var filename = split_url[split_url.length-1]; //grab the last one
+                validate_and_import(filename, {
+                    import: {
+                        dataset_id: $scope.selected_dataset._id,
+                        path: "../"+download_task._id+"/"+filename,
+                    }
+                }, [download_task._id]);
+            }, function(res) {
+                if(res.data && res.data.message) toaster.error(res.data.message);
+                else toaster.error(res.statusText);
+            });
+        }, function() {
+            //dismisses - do nothing
+        });
+    }
+
+    $scope.rerun_task = function(task_id) {
+        $http.put($scope.appconf.wf_api+"/task/rerun/"+task_id)
+        .then(function(res) {
+            toaster.success("Requested to rerun");
+        }, function(res) {
+            if(res.data && res.data.message) toaster.error(res.data.message);
+            else toaster.error(res.statusText);
+        });
+    }
+
+    //submit validate & import service based on file type
+    function validate_and_import(filename, config, deps) {
+        //add bit more config we need
+        //I don't like that user's jwt is stored in task.. but at least it's time limited and only 
+        //visible to the users themselves
+        config.jwt = localStorage.getItem($scope.appconf.jwt_id);
+        config.onere_api = getAbsoluteUrl($scope.appconf.api);
+        config._filename = filename; //only used by UI
+        
+        $http.post($scope.appconf.wf_api+"/task", { 
             instance_id: $scope.instance._id,
             name: "_importing", //important - so that I can query for all importing tasks
             service: "soichih/sca-service-onere",
-            config: {
-                _filename: filename, //only used for UI
-                
-                //I don't like that user's jwt is stored in task.. but at least it's time limited and only 
-                //visible to the users themselves
-                jwt: localStorage.getItem($scope.appconf.jwt_id),
-                onere_api: getAbsoluteUrl($scope.appconf.api),
-                import: {
-                    dataset_id: dataset._id,
-                    path: "../_upload/"+filename,
-                }
-            }
+            deps: deps||[],
+            config: config 
         })
         .then(function(res) {
             console.log("sca-product-onere service requested");

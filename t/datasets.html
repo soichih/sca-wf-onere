@@ -26,7 +26,7 @@
             <div class="list-header">{{dataset.name||'untitled'}}</div>
             <small>
                 <time class="text-muted" style="position: relative; top: -4px;">{{dataset.create_date | date}}</time>
-                <p class="text-muted">{{dataset.desc}}</p>
+                <p>{{dataset.desc| cut:true:200:' ...'}}</p>
             </small>
         </div>
         <div class="onere-list-addicon" ng-click="add_dataset()">
@@ -43,9 +43,6 @@
             <i class="fa fa-share-alt" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
 
             <span class="pull-right" ng-class="{'text-muted':!selected_app.locked}">
-                <!--
-                <input type="checkbox" ng-model="selected_app.locked"> Locked</input>
-                -->
                 <button type="button" class="btn" ng-model="selected_app.locked"> Locked </button>
             </span>
         </h2>
@@ -58,7 +55,7 @@
         <textarea class="desc" 
             ng-change="save_dataset()"
             ng-model="selected_dataset.desc"
-            placeholder="enter descriptions here .."></textarea> 
+            placeholder="enter dataset summary here .."></textarea> 
 
         <!--uploaded files-->
         <h3>Files</h3>
@@ -88,6 +85,9 @@
                 Validating <small>{{task.config._filename}}</small>
             </h4>
             <h4 ng-if="task.status == 'failed'">
+                <button type="button" class="btn btn-xs pull-right" ng-click="rerun_task(task._id)">
+                    <i class="fa fa-repeat" aria-hidden="true"></i> Rerun
+                </button>
                 <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> 
                 Failed <small>{{task.config._filename}}</small>
             </h4>
@@ -111,18 +111,40 @@
 
         <!--new files-->
         <!--<h4>Upload New Files</h4>-->
-        <button type="file" 
-            ng-if="resources.upload && !uploading"
-            class="btn btn-sm btn-primary"
+        <div class="pull-right">
+            <button type="file" 
+                ng-if="resources.upload && !uploading"
+                class="btn btn-sm btn-primary"
 
-            accept-dis="image/*" 
-            ngf-max-height-dis="100" 
+                accept-dis="image/*" 
+                ngf-max-height-dis="100" 
 
-            ngf-select="uploadFiles($file, $invalidFiles)"
-            ngf-max-size="1GB">
-            <i class="fa fa-plus" aria-hidden="true"></i> Upload New File
-        </button>
+                ngf-select="uploadFiles($file, $invalidFiles)"
+                ngf-max-size="1GB">
+                <i class="fa fa-cloud-upload" aria-hidden="true"></i>&nbsp;&nbsp;Upload New File
+            </button>
+            <button type="button" class="btn btn-sm btn-primary" ng-click="start_download()">
+                <i class="fa fa-globe" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Download from URL</button>
+        </div>
+        <br clear="both">
+
         <p class="alert" ng-if="!resources.upload">You currerntly don't have any resource to upload your files. Please try again later, or contact SCA support.</p>
+
+        <!--
+        <h3>Tags</h3>
+        <ui-select multiple ng-model="selected_dataset.config.tags" theme="bootstrap" close-on-select="false" style="width: 300px;" title="Choose tags">
+            <ui-select-match placeholder="Select tags...">{{$item}}</ui-select-match>
+            <ui-select-choices repeat="tag in available_tags | filter:$select.search">
+            {{tag}}
+            </ui-select-choices>
+        </ui-select>
+        -->
+
+        <h3>Citation</h3>
+        <blockquote class="well">
+            Doe, John. (2016); {{selected_dataset.name}}. ONERE Dataset.
+            <small>doi:10.12345/onere.{{selected_dataset._id}}</small>
+        </blockquote>
 
         <!--debugging..-->
         <div class="text-muted">

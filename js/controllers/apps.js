@@ -48,23 +48,6 @@ app.controller('AppsController', function($scope, toaster, $http, $timeout) {
         console.log("selecting app");
         console.log(app);
         $scope.selected_app = app;
-        
-        /*
-        //load importing tasks
-        $http.get($scope.appconf.wf_api+"/task", {params: {
-            sort: 'create_date', //older ones first
-            find: JSON.stringify({
-                name: "_importing", //needs to match the name when I request importing tasks
-                "config.import.dataset_id": dataset._id,
-            })
-        }})
-        .then(function(res) {
-            $scope.importing_tasks = res.data.tasks;
-        }, function(res) {
-            if(res.data && res.data.message) toaster.error(res.data.message);
-            else toaster.error(res.statusText);
-        });
-        */
     }
 
     $scope.types = [
@@ -77,7 +60,8 @@ app.controller('AppsController', function($scope, toaster, $http, $timeout) {
         var app = {
             config: {
                 type: "docker",
-                container: "bids/example:0.0.4"
+                container: "bids/example:0.0.4",
+                bash: "#!/bin/bash\n",
             }
         };
         //register empty app
