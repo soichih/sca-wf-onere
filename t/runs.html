@@ -1,1 +1,158 @@
-runs todo..
+<div class="subbar">
+    <div style="padding-left: 20px; margin-bottom: 10px">
+        <h2>Executions</h2>
+        <br>
+        <div class="btn-group pull-right" style="left: -20px;top: -5px;">
+            <button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Options <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+            <li><a href>Project ABC</a></li>
+            <li><a href>Project DEF</a></li>
+            <li><a href>Project AAA</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href>Separated link</a></li>
+            </ul>
+        </div>
+        <span class="text-muted">{{tasks.length}} tasks</span>
+    </div>
+    <hr style="margin: 0px;">
+
+    <div class="onere-list">
+        <div class="onere-list-item" 
+            ng-repeat="task in tasks" 
+            ng-class="{'active': selected == task}"
+            ng-click="select(task)">
+
+            <small><taskstatus status="task.status" class="pull-right"></taskstatus></small>
+
+            <div class="list-header">{{task.config._application.name}}</div>
+            <small>
+                <time class="text-muted" style="position: relative; top: -4px;">{{task.create_date | date}}</time>
+                <p class="">{{task.config._application.desc|cut:true:100:' ...'}}</p>
+            </small>
+        </div>
+        <!--
+        <div class="onere-list-addicon" ng-click="execute()">
+            <i class="fa fa-plus-circle" aria-hidden="true"></i> 
+        </div>
+        -->
+    </div>
+</div>
+<div class="onere-content" ng-if="!selected && tasks.length == 0">
+    <div class="container" style="margin-top: 20px;">
+        <p class="help-block">There are no applications recently exeucted by you.</p>
+    </div> 
+</div>
+<div class="onere-content" ng-if="selected">
+    <div style="margin-left: 30px; margin-right: 30px;">
+        <h2 style="position: relative; left: -10px;">
+            <i class="fa fa-trash-o" aria-hidden="true" ng-click="delete()"></i>&nbsp;&nbsp;&nbsp;
+            <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
+            <i class="fa fa-star-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
+            <i class="fa fa-share-alt" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
+            <!--
+            <onoffbutton b="selected.locked" class="pull-right"></onoffbutton>
+            -->
+            <!--
+            <button type="button" class="btn btn-primary pull-right" ng-click="execute()">
+                <i class="fa fa-play-circle" aria-hidden="true"></i>
+                Execute
+            </button>
+            -->
+            <div class="pull-right">
+                <button type="button" class="btn btn-default" 
+                    ng-click="rerun()" 
+                    ng-if="selected.status == 'finished' || selected.status == 'failed'">
+                    <i class="fa fa-repeat" aria-hidden="true"></i> Rerun
+                </button>
+                <button type="button" class="btn btn-default" 
+                    ng-click="stop()"
+                    ng-if="selected.status == 'running' || selected.status == 'requested'">
+                    <i class="fa fa-stop" aria-hidden="true"></i> Stop
+                </button>
+            </div>
+        </h2>
+
+        <h2 class="page-heading" style="margin-bottom: 0px;"><small>Executing</small> {{selected.config._application.name}}</h2>
+        <div style="background-color: #f8f8f8; padding: 20px;">
+            <button type="button" class="btn btn-xs pull-right" ng-click="showdetail()">
+                <i class="fa fa-info-circle" aria-hidden="true"></i> See Application Detail</button>
+            <p class="help-block">{{selected.config._application.desc}}</p>
+        </div>
+
+        <h3>Execution Status</h3>
+        <h4>
+            <taskstatus status="selected.status"></taskstatus><span class="label label-default">{{selected.status_msg|cut:true:130:' ...'}}</span>
+        </h4>
+
+        <!--
+        <tabset>
+            <tab index="0" heading="stdout.log"></tab>
+        </tabset>
+        -->
+
+        <h3>Logs</h3>
+        <div class="section">
+            <div ng-if="boot_log">
+                <code>boot.log</code>
+                <div ui-ace="{
+                    theme2: 'twilight',
+                    useWrapMode: true,
+                    mode: 'bash',
+                }" ng-model="boot_log" readonly></div>
+            </div>
+            <div ng-if="stdout_log">
+                <code>stdout.log</code>
+                <div ui-ace="{
+                    theme2: 'twilight',
+                    useWrapMode: true,
+                    mode: 'bash',
+                }" ng-model="stdout_log" readonly></div>
+            </div>
+        </div>
+       
+        <!--
+        <div ng-if="selected.status == 'failed'">
+            <br>
+            <p class="text-danger">
+                <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                Execution of this application has failed. Please rerun, or contact SCA support
+            </p>
+        </div>
+        -->
+
+        <!--
+        <sca-wf-taskdeps taskid="selected._id"></sca-wf-taskdeps>
+        <h2 class="page-heading">{{selected.config._application.name}}</h2>
+        -->
+        <!--
+        <h3>Status</h3>
+        <taskstatus status="selected.status"></taskstatus> {{selected.status_msg}}
+        <div class="row">
+        <div class="col-md-5">
+        </div>
+        <div class="col-md-7">
+        </div>
+        </div>
+        -->
+
+        <h3>Output</h3>
+        <div class="section">
+            <sca-product-raw taskid="selected._id"></sca-product-raw>
+            <!--
+            <button type="button" class="btn btn-xs btn-default pull-right">
+                <i class="fa fa-cloud-download" aria-hidden="true"></i> Download All
+            </button>
+            <br clear="both">
+            -->
+        </div>
+
+        <!--debugging..-->
+        <div class="text-muted">
+            <hr style="margin-top: 200px;">
+            <h3>Debug</h3>
+            <pre style="font-size: 60%;">{{selected|json}}</pre>
+        </div>
+    </div>
+</div>

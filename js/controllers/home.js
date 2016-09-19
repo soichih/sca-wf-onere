@@ -12,18 +12,18 @@ app.controller('HomeController', function($scope, toaster, $http, $timeout, $loc
     $scope.update_search = function() {
         $timeout.cancel(search_timer); //cancel previous timer
         search_timer = $timeout(function() {
-            search_appdata(); 
+            search_app(); 
         }, 300);
     }
 
     //run initial search
-    search_appdata();
+    search_app();
 
-    function search_appdata() {
-        //load appdatas
+    function search_app() {
+        //load app
         var query = {
             sort: '-create_date', //newer ones first
-            select: 'name desc user_id application_id dataset_id project_id create_date',
+            select: 'name desc user_id datasets config project_id create_date',
             limit: 500,
         }
         if($scope.searchterm) {
@@ -33,20 +33,24 @@ app.controller('HomeController', function($scope, toaster, $http, $timeout, $loc
                 ] 
             });
         }
-        $http.get($scope.appconf.api+"/appdata", { params: query})
+        $http.get($scope.appconf.api+"/application", {params: query})
         .then(function(res) {
-            $scope.appdatas = res.data.appdatas;
+            console.log("applications loaded");
+            console.dir(res.data.applications);
+            $scope.apps = res.data.applications;
         }, function(res) {
             if(res.data && res.data.message) toaster.error(res.data.message);
             else toaster.error(res.statusText);
         });
     }
     
+    /*
     $scope.add = function() {
         $location.path("/new");
     }
-    $scope.open = function(appdata) {
-        $location.path("/view/appdata/"+appdata._id);
+    */
+    $scope.open = function(app) {
+        $location.path("/view/app/"+app._id);
     }
 });
 

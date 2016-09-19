@@ -35,11 +35,37 @@ app.directive('apptype', function() {
         template: '<span class="label" ng-class="c">{{type}}</span>',
         scope: { type: '<' },
         controller: function($scope) {
-            switch($scope.type) {
-            case "docker": $scope.c = "label-primary"; break;
-            case "dockerbuilder": $scope.c = "label-info"; break;
-            case "bash": $scope.c = "label-success"; break;
-            }
+            $scope.$watch('type', function() {
+                switch($scope.type) {
+                case "docker": $scope.c = "label-primary"; break;
+                case "dockerbuilder": $scope.c = "label-info"; break;
+                case "bash": $scope.c = "label-success"; break;
+                }
+            });
+        }
+    }
+});
+
+app.directive('taskstatus', function() {
+    return {
+        template: '<span class="label" ng-class="c"><!--<i class="fa fa-cog fa-spin" aria-hidden="true" ng-if="status == \'running\'"></i> -->{{status|uppercase}}</span>',
+        scope: { status: '<' },
+        controller: function($scope) {
+            $scope.$watch('status', function() {
+                switch($scope.status) {
+                case "requested": 
+                    $scope.c = "label-info"; break;
+                case "running": 
+                case "running_sync": 
+                    $scope.c = "label-primary"; break;
+                case "failed": 
+                    $scope.c = "label-danger"; break;
+                case "finished": 
+                    $scope.c = "label-success"; break;
+                default:
+                    $scope.c = "label-warning"; 
+                }
+            });
         }
     }
 });

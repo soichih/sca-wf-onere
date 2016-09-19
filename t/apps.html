@@ -21,7 +21,7 @@
     <div class="onere-list">
         <div class="onere-list-item" 
             ng-repeat="app in apps" 
-            ng-class="{'active': selected_app == app}"
+            ng-class="{'active': selected == app}"
             ng-click="select_app(app)">
 
             <!--application type-->
@@ -43,7 +43,7 @@
         </div>
     </div>
 </div>
-<div class="onere-content" ng-if="selected_app">
+<div class="onere-content" ng-if="selected">
     <div style="margin-left: 30px; margin-right: 30px;">
 
         <h2 style="position: relative; left: -10px;">
@@ -52,20 +52,79 @@
             <i class="fa fa-star-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
             <i class="fa fa-share-alt" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
             <!--
-            <onoffbutton b="selected_app.locked" class="pull-right"></onoffbutton>
+            <onoffbutton b="selected.locked" class="pull-right"></onoffbutton>
             -->
+            <button type="button" class="btn btn-primary pull-right" ng-click="execute()" ng-if="resources.onere">
+                <i class="fa fa-play-circle" aria-hidden="true"></i>
+                Execute
+            </button>
         </h2>
 
         <!--name/desc-->
         <input type="text" class="header" 
-            ng-change="save_app()"
-            ng-model="selected_app.name" 
+            ng-change="save()"
+            ng-model="selected.name" 
             placeholder="enter app name here .."></input> 
         <textarea class="desc" 
-            ng-change="save_app()"
-            ng-model="selected_app.desc"
+            ng-change="save()"
+            ng-model="selected.desc"
             placeholder="enter application summary here .."></textarea> 
         <br>
+
+        <div class="row form-group">
+            <div class="col-md-3">
+                <h4>Input Datasets</h4>
+            </div>
+            <div class="col-md-9">
+                <table class="table">
+                <thead>
+                <tr>
+                    <th>Name
+                        <small class="help-block">Used as input directory name</small>
+                    </th>
+                    <th>Dataset
+                        <small class="help-block">You can add datasets on Datasets page</small>
+                    </th>
+                    <!--<th>Required</th>-->
+                    <th><!--command--></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="dataset in selected.datasets">
+                    <td>
+                        <input type="text" ng-change="save()" ng-model="dataset.name" class="form-control"></input>
+                    </td>
+                    <td>
+                        <select ng-model="dataset.id._id" 
+                            placedholder="Dataset"
+                            ng-change="save()"
+                            ng-options="dataset._id as dataset.name for dataset in datasets" class="form-control">
+                            <option></option><!--needed to make required work-->
+                        </select>
+                    </td>
+                    <!--
+                    <td>
+                        <input type="checkbox" ng-click="save()" ng-model="dataset.required"> Required</input>
+                    </td>
+                    -->
+                    <td>
+                        <button type="button" ng-click="delete_dataset(dataset)" class="btn btn-xs">
+                            <i class="fa fa-trash-o"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <th colspan="4">
+                        <button type="button" ng-click="add_dataset()" class="btn btn-xs">
+                            <i class="fa fa-plus-circle" aria-hidden="true"></i> Add Dataset
+                        </button>
+                    </th>
+                </tr>
+                </tbody>
+                </table>
+
+            </div><!--col-md-9-->
+        </div> 
 
         <!--application type-->
         <div class="row form-group">
@@ -74,52 +133,34 @@
             </div>
             <div class="col-md-9">
                 <select class="form-control" style="width: 300px"
-                    ng-change="save_app()"
+                    ng-change="save()"
                     ng-options="item.id as item.label for item in types"
-                    ng-model="selected_app.config.type" required>
+                    ng-model="selected.config.type" required>
                     <option></option><!--needed to make required work-->
                 </select>
 
                 <!--some help content-->
-                <div class="text-muted" ng-if="selected_app.config.type == 'docker'">
-                    <br>
-                    <img width="200px" src="img/docker.png" align="right">
-                    <p>Register your application as a docker container that can be executed on a docker engine.</p>
-                    <p>Upon execution, input dataset will be volume mounted on <code>/input</code> as read-only. You can output data to <code>/output</code> and can be exported up to 25 days via ONERE UI.</p>
+                <div class="help-block" ng-if="selected.config.type == 'docker'">
+                    <img width="200px" src="img/docker.png">
+                    <p>Register your application as a docker container that can be executed on a docker engine. You can publish your container on dockerhub, Google Container Registry, or any public registries.</p>
+                    <p>Upon execution, input datasets will be mounted on <code>/input/<datasetname></code> as read-only directories. You can output data to <code>/output</code> and will be published up to 25 days via ONERE UI.</p>
                     <p>Container will run with -u uid:gid set to the same user/group ID that is executing container.</p>
                 </div>
 
-                <div class="text-muted" ng-if="selected_app.config.type == 'dockerbuilder'">
-                    <br>
-                    <img src="img/docker.png" align="right">
+                <div class="help-block" ng-if="selected.config.type == 'dockerbuilder'">
+                    <img width="200px" src="img/docker.png">
                     <p>Register your application in a Dockerfile format that can build your application as a docker container and be executed on a docker engine.</p>
                     <p>Container will run with -u uid:gid set to the same user/group ID that is executing container.</p>
                 </div>
 
-                <div class="text-muted" ng-if="selected_app.config.type == 'bash'">
-                    <br>
+                <div class="help-block" ng-if="selected.config.type == 'bash'">
                     <p>Register your application that can be executed on a typical HPC/HTC system from a bash script.</p>
                 </div>
 
             </div><!--col-md-9-->
         </div> 
 
-        <div class="row form-group">
-            <div class="col-md-3">
-                <h4>Resource Type</h4>
-            </div>
-            <div class="col-md-9">
-                <select class="form-control" style="width: 300px"
-                    ng-change="save_app()"
-                    ng-options="id as detail.name for (id, detail) in resource_types"
-                    ng-model="selected_app.config.resource_type" required>
-                    <option></option><!--needed to make required work-->
-                </select>
-                <p class="text-muted">Resource where you can execute this service. Only users who have access to specified resource can actually execute.</p>
-            </div><!--col-md-9-->
-        </div> 
-
-        <div ng-if="selected_app.config.type == 'dockerbuilder'">
+        <div ng-if="selected.config.type == 'dockerbuilder'">
             <div class="row form-group">
                 <div class="col-md-3">
                     <h4>Dockerfile</h4>
@@ -144,8 +185,8 @@
 
                     <div ui-ace="{
                         mode: 'dockerfile',
-                        onChange: save_app,
-                    }" ng-model="selected_app.config.dockerfile"></div>
+                        onChange: save,
+                    }" ng-model="selected.config.dockerfile" style="height: 200px"></div>
                 </div>
             </div><!--form-gruop-->
 
@@ -155,23 +196,39 @@
                 </div>
                 <div class="col-md-9">
                     <input type="text" class="form-control"
-                        ng-change="save_app()"
-                        ng-model="selected_app.config.container_arg" 
+                        ng-change="save()"
+                        ng-model="selected.config.container_arg" 
                         placeholder=""></input> 
-                    <p class="text-muted">Arguments to passed to your container (will override CMD on Dockerfile)</p>
+                    <p class="help-block">Arguments to passed to your container (will override CMD on Dockerfile)</p>
                 </div>
             </div> 
+
+            <div class="row form-group">
+                <div class="col-md-3">
+                    <h4>Preprocessing Script</h4>
+                </div>
+                <div class="col-md-9">
+                    <div ui-ace="{
+                        mode: 'bash',
+                        onChange: save,
+                    }" ng-model="selected.config.prescript"></div>
+                    <div class="help-block">
+                        <p>Perform any preprocessing of input datasets prior to executing your container.</p>
+                        <p><code>$INPUT</code> will point to where the input datasets are staged</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div ng-if="selected_app.config.type == 'docker'">
+        <div ng-if="selected.config.type == 'docker'">
             <div class="row form-group">
                 <div class="col-md-3">
                     <h4>Container Name</h4>
                 </div>
                 <div class="col-md-9">
                     <input type="text" class="form-control"
-                        ng-change="save_app()"
-                        ng-model="selected_app.config.container" 
+                        ng-change="save()"
+                        ng-model="selected.config.container" 
                         placeholder="[registry/]namespace/reponame[:tag]" required></input> 
                 </div>
             </div> 
@@ -182,15 +239,32 @@
                 </div>
                 <div class="col-md-9">
                     <input type="text" class="form-control"
-                        ng-change="save_app()"
-                        ng-model="selected_app.config.container_arg" 
-                        placeholder=""></input> 
-                    <p class="text-muted">Arguments to pass to your container</p>
+                        ng-change="save()"
+                        ng-model="selected.config.container_arg" 
+                        placeholder="-in /input/data1 -out /output"></input> 
+                    <p class="help-block">Arguments to pass to your container</p>
                 </div>
             </div> 
+
+            <div class="row form-group">
+                <div class="col-md-3">
+                    <h4>Preprocessing Script</h4>
+                </div>
+                <div class="col-md-9">
+                    <div ui-ace="{
+                        mode: 'bash',
+                        onChange: save,
+                    }" ng-model="selected.config.prescript"></div>
+                    <div class="help-block">
+                        <p>Perform any preprocessing of input datasets prior to executing your container</p>
+                        <p><code>$INPUT</code> will point to where the input datasets are staged</p>
+                    </div>
+                </div>
+            </div> 
+
         </div><!--sca-service-docker-->
 
-        <div ng-if="selected_app.config.type == 'bash'">
+        <div ng-if="selected.config.type == 'bash'">
             <div class="row form-group">
                 <div class="col-md-3">
                     <h4>Bash Script</h4>
@@ -198,27 +272,43 @@
                 <div class="col-md-9">
                     <div ui-ace="{
                         mode: 'bash',
-                        onChange: save_app,
-                    }" ng-model="selected_app.config.bash"></div>
-                    <div class="text-muted">
-                        <p>You can git clone your application, or download script hosted on your server.</p>
-                        <p>Input dataset will be stored in a directory specified by environment parameter <code>$INPUT</code>. Output file should be generated in a working directory.</p>
+                        onChange: save,
+                    }" ng-model="selected.config.bash" style="height: 200px;"></div>
+                    <div class="help-block">
+                        <p>You can enter script to git clone or use wget to download your applications and run it.</p>
+                        <p>Input datasets will be staged using directory names you have specified earlier. Any output files should be generated in script's working directory, or use <code>$SCA_TASK_DIR</code>.</p>
                     </div>
                 </div>
             </div> 
         </div><!--sca-service-bash-->
 
+        <div class="row form-group">
+            <div class="col-md-3">
+                <h4>Resource Type</h4>
+            </div>
+            <div class="col-md-9">
+                <select class="form-control" style="width: 300px"
+                    ng-change="save()"
+                    ng-options="id as detail.name for (id, detail) in resource_types"
+                    ng-model="selected.config.resource_type" required>
+                    <option></option><!--needed to make required work-->
+                </select>
+                <p class="help-block">Resource where you can execute this service. Only users who have access to specified resource can actually execute.</p>
+            </div><!--col-md-9-->
+        </div> 
+
+
         <h3>Citation</h3>
         <blockquote class="well">
-            Doe, John. (2016); {{selected_app.name}}. ONERE Application.
-            <small>doi:10.12345/onere.{{selected_app._id}}</small>
+            Doe, John. (2016); {{selected.name}}. ONERE Application.
+            <small>doi:10.12345/onere.{{selected._id}}</small>
         </blockquote>
 
         <!--debugging..-->
         <div class="text-muted">
             <hr style="margin-top: 200px;">
             <h3>Debug</h3>
-            <pre style="font-size: 60%;">{{selected_app|json}}</pre>
+            <pre style="font-size: 60%;">{{selected|json}}</pre>
         </div>
     </div>
 </div>

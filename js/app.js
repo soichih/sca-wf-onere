@@ -1,5 +1,14 @@
 'use strict';
 
+var getAbsoluteUrl = (function() {
+    var a;
+    return function(url) {
+        if(!a) a = document.createElement('a');
+        a.href = url;
+        return a.href;
+    };
+})();
+
 var app = angular.module('app', [
     'app.config',
     'ngRoute',
@@ -10,7 +19,7 @@ var app = angular.module('app', [
     'angular-jwt',
     'ui.bootstrap',
     'ui.bootstrap.modal',
-    //'ui.bootstrap.tooltip',
+    'ui.bootstrap.tooltip',
     'ui.select',
     'ui.gravatar',
     'ui.ace',
@@ -18,6 +27,7 @@ var app = angular.module('app', [
     'sca-ng-wf',
     'sca-shared',
     'sca-product-raw',
+    'yaru22.angular-timeago',
 ]);
 
 //can't quite do the slidedown animation through pure angular/css.. borrowing slideDown from jQuery..
@@ -61,6 +71,7 @@ app.config(function(appconf, $httpProvider, jwtInterceptorProvider) {
         //don't send jwt for template requests (I don't think angular will ever load css/js - browsers do)
         //if (config.url.substr(config.url.length - 5) == '.html') return null;
         var jwt = localStorage.getItem(appconf.jwt_id);
+        if(!jwt) return null;
         var expdate = jwtHelper.getTokenExpirationDate(jwt);
         var ttl = expdate - Date.now();
         if(ttl < 0) {

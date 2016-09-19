@@ -134,7 +134,7 @@ app.controller('AppdataController', function($scope, toaster, $window, $http, $l
         //TODO - popup confirmation dialog first? 
         $http.delete($scope.appconf.api+"/appdata/"+$scope.selected._id)
         .then(function(res) {
-            toaster.warning("Successfully removed app/data entry: "+$scope.selected.name);
+            toaster.success("Successfully removed app/data entry: "+$scope.selected.name);
             $scope.apps.splice($scope.apps.indexOf($scope.selected), 1);
             $scope.selected = null;
         }, function(res) {

@@ -1,8 +1,8 @@
 'use strict';
 
-app.controller('AppsController', function($scope, toaster, $http, $timeout) {
+app.controller('AppsController', function($scope, toaster, $http, $timeout, onere, $location) {
     $scope.$parent.active_menu = "apps";
-    $scope.selected_app = null;
+    $scope.selected = null;
     $scope.resource_types = [];
 
     $scope.docker_templates = {
@@ -10,15 +10,32 @@ app.controller('AppsController', function($scope, toaster, $http, $timeout) {
         "CentOS6": "FROM centos:6\n\nRUN yum update & yum install -y \\\n  something \\\n  otherthing\n\nCMD [\"/app/something\", \"-someparam\"]\n"
     }
     $scope.dockerfile_set = function(content) {
-        if(!$scope.selected_app) return;//app not yet selected
-        $scope.selected_app.config.dockerfile = content;
-        $scope.save_app();
+        if(!$scope.selected) return;//app not yet selected
+        $scope.selected.config.dockerfile = content;
+        $scope.save();
     }
+    
+    //load datasets
+    $http.get($scope.appconf.api+"/dataset", { params: {
+        sort: '-create_date', //newer ones first
+        select: 'name desc create_date',
+
+        //TODO - I will probably allow datasets from user's projects
+        find: JSON.stringify({
+            user_id: $scope.user.sub
+        })
+    }})
+    .then(function(res) {
+        $scope.datasets = res.data.datasets;
+    }, function(res) {
+        if(res.data && res.data.message) toaster.error(res.data.message);
+        else toaster.error(res.statusText);
+    });
  
     //load apps
     $http.get($scope.appconf.api+"/application", { params: {
         sort: '-create_date', //newer ones first
-        select: 'name desc config create_date',
+        select: 'name desc datasets config create_date',
         
         //TODO - I will probably allow application from user's projects
         find: JSON.stringify({
@@ -38,7 +55,17 @@ app.controller('AppsController', function($scope, toaster, $http, $timeout) {
     //load resource types
     $http.get($scope.appconf.wf_api+"/resource/types")
     .then(function(res) {
-        $scope.resource_types = res.data;
+        $scope.resource_types = {
+            //injecting random resource types for demo purpose
+            jetstream_m: {name: "Jetstream VM (medium)"},
+            jetstream_l: {name: "Jetstream VM (large)"},
+            jetstream_xl: {name: "Jetstream VM (xlarge)"},
+        };
+        console.dir(res.data);
+        for(var key in res.data) {
+            var detail = res.data[key];
+            if(detail.type == "ssh") $scope.resource_types[key] = detail;
+        }
     }, function(res) {
         if(res.data && res.data.message) toaster.error(res.data.message);
         else toaster.error(res.statusText);
@@ -47,7 +74,7 @@ app.controller('AppsController', function($scope, toaster, $http, $timeout) {
     $scope.select_app = function(app) {
         console.log("selecting app");
         console.log(app);
-        $scope.selected_app = app;
+        $scope.selected = app;
     }
 
     $scope.types = [
@@ -57,15 +84,17 @@ app.controller('AppsController', function($scope, toaster, $http, $timeout) {
     ];
 
     $scope.add_app = function() {
-        var app = {
+        //register empty app
+        $http.post($scope.appconf.api+"/application", {
+            //default
             config: {
                 type: "docker",
                 container: "bids/example:0.0.4",
                 bash: "#!/bin/bash\n",
-            }
-        };
-        //register empty app
-        $http.post($scope.appconf.api+"/application", {})
+                prescript: "#!/bin/bash\n\n#optional script to massage your input datasets",
+            },
+            //datasets: [],
+        })
         .then(function(res) {
             var newapp = res.data;
             $scope.apps.unshift(newapp);
@@ -77,8 +106,8 @@ app.controller('AppsController', function($scope, toaster, $http, $timeout) {
     }
 
     var save_timer;
-    $scope.save_app = function() {
-        var app = $scope.selected_app;
+    $scope.save = function() {
+        var app = $scope.selected;
         if(!app) return; //app not yet selected
         $timeout.cancel(save_timer); //clear previous timer
         save_timer = $timeout(function() {
@@ -94,17 +123,39 @@ app.controller('AppsController', function($scope, toaster, $http, $timeout) {
     }
 
     $scope.delete = function() {
-        if(!$scope.selected_app) return;//app not yet selected
+        if(!$scope.selected) return;//app not yet selected
 
         //TODO - popup confirmation dialog first? 
-        $http.delete($scope.appconf.api+"/application/"+$scope.selected_app._id)
+        $http.delete($scope.appconf.api+"/application/"+$scope.selected._id)
         .then(function(res) {
-            toaster.warning("Successfully removed an application: "+$scope.selected_app.name);
-            $scope.apps.splice($scope.apps.indexOf($scope.selected_app), 1);
-            $scope.selected_app = null;
+            toaster.success("Successfully removed an application: "+$scope.selected.name);
+            $scope.apps.splice($scope.apps.indexOf($scope.selected), 1);
+            $scope.selected = null;
         }, function(res) {
             if(res.data && res.data.message) toaster.error(res.data.message);
             else toaster.error(res.statusText);
+        });
+    }
+
+    $scope.add_dataset = function() {
+        if(!$scope.selected) return;//app not yet selected
+        if($scope.selected.datasets == undefined) $scope.selected.datasets = [];
+        $scope.selected.datasets.push({name: "input"+($scope.selected.datasets.length+1), id: null});
+        $scope.save();
+    }
+    $scope.delete_dataset = function(dataset) {
+        if(!$scope.selected) return;//app not yet selected
+        var idx = $scope.selected.datasets.indexOf(dataset);
+        $scope.selected.datasets.splice(idx, 1);
+        $scope.save();
+    }
+    $scope.execute = function() {
+        if(!$scope.selected) return; //app not yet selected
+        onere.execute($scope.selected, $scope.instance, $scope.resources.onere).then(function(task) {
+            toaster.success("Submitted a new onere execution");
+            $location.path("/runs/"+task._id);
+        }, function(err) {
+            toaster.error(err);
         });
     }
 });

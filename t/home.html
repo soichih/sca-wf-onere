@@ -8,48 +8,87 @@
         aria-hidden="true"></i>
     -->
     <input type="text" 
-        placeholder="search datasets / code / projects, etc.. " 
+        placeholder="search applications / datasets / projects, etc.. " 
         ng-change="update_search()"
         onfocus="this.placeholder = ''" 
         ng-model="searchterm"></input>
 </div>
 <div class="container-fluid" style="margin-top: 93px">
-    <h2>App/Data</h2>
-    <p class="text-muted">Here are the list of app/data combinations used to produce data products published by authors.</p>
+    <h2>APPLICATIONS</h2>
     <table class="table table-hover table-condensed onere-table">
         <thead>
         <tr class="text-muted">
-            <th width="35%">Project / Entry Name</th>
-            <th>Dataset</th>
-            <th>Application</th>
+            <th>Project 
+                <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+            </th>
+            <th width="35%">Name/Desc
+                <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+            </th>
+            <th>Datasets
+                <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+            </th>
+            <th>Resource&nbsp;Type
+                <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+            </th>
+            <th width="120px">Date
+                <i class="fa fa-sort pull-right" aria-hidden="true"></i>
+            </th>
+            <th>Tags</th>
+            <th width="120px">Contacts</th>
+            <!--
             <th>Publications</th>
+            -->
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="appdata in appdatas" ng-click="open(appdata)">
+        <tr ng-repeat="app in apps" ng-click="open(app)">
             <td>
-                <h5 class="appdata-name">
-                    <span class="label label-default">Test Project</span> {{appdata.name}}
-                </h5>
-                <p class="text-muted">
-                    <small>doi:10.1234/onere.{{appdata._id}}</small> |
-                    <scaprofile id="appdata.user_id" email="false"></scaprofile> |
-                    <time>{{appdata.create_date|date}}</time>
-                </p>
-                <p class="">{{appdata.desc|cut:true:100:' ...'}}</p>
+                Test
             </td>
+
+            <!--Name/Desc-->
             <td>
-                <h5>{{appdata.dataset_id.name}}</h5>
-                <p class="">{{appdata.dataset_id.desc|cut:true:100:' ...'}}</p>
+                <h5 class="app-name">{{app.name}}</h5>
+                <p class="">{{app.desc|cut:true:200:' ...'}}</p>
+                <!--<p class="text-muted"> <small>doi:10.1234/onere.{{app._id}}</small> </p>-->
+                <!--<apptype type="app.config.type" class="pull-right"></apptype>-->
             </td>
+
+            <!--dataset-->
             <td>
-                <apptype type="appdata.application_id.config.type" class="pull-right"></apptype>
-                <h5>{{appdata.application_id.name}}</h5>
-                <p class="">{{appdata.application_id.desc|cut:true:100}}</p>
+                <div ng-repeat="dataset in app.datasets">
+                    {{dataset.id.name}} <small>as</small> <code>{{dataset.name}}</code>
+                </div>
             </td>
+
+            <!--resource_type-->
+            <td>
+                {{app.config.resource_type|uppercase}}
+            </td>
+
+
+            <td>
+                <time>{{app.create_date|date}}</time>
+            </td>
+            
+            <!--tags-->
+            <td>
+                <span>Frontal</span>
+                <span>Motor</span>
+            </td>
+
+            <!--contacts-->
+            <td>
+                <scaprofile id="app.user_id" email="false"></scaprofile>
+            </td>
+
+ 
+            <!--publications-->
+            <!--
             <td>
                 <small class="">Emergence of orientation selectivity in the mammalian visual pathway.  Benjamin Scholl, Andrew Y.Y. Tan, Joe Corey and Nicholas J. Priebe.; J. Neurosci. 33(26):10616-10624.</small>
             </td>
+            -->
             <!--
             <td class="text-muted">
                 <i class="fa fa-play-circle" aria-hidden="true"></i>&nbsp;&nbsp;
@@ -59,13 +98,15 @@
         </tr>
         </tbody>
     </table>
+    <!--
     <div class="onere-home-addicon" ng-click="add()">
         <i class="fa fa-plus-circle" aria-hidden="true"></i> 
     </div>
+    -->
 
     <div class="text-muted">
         <hr style="margin-top: 200px;">
         <h3>Debug</h3>
-        <pre style="font-size: 60%;">{{appdatas|json}}</pre>
+        <pre style="font-size: 60%;">{{apps|json}}</pre>
     </div>
 </div>

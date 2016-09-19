@@ -27,6 +27,7 @@
     "angular-loading-bar": "^0.9.0",
     "angular-route": "^1.5.8",
     "angular-sanitize": "^1.5.8",
+    "angular-timeago": "^0.4.3",
     "angular-ui-ace": "^0.2.3",
     "angular-ui-select": "^0.12.100",
     "angularjs-toaster": "^2.0.0",
