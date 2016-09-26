@@ -1,6 +1,7 @@
 <div class="subbar">
     <div style="padding-left: 20px; margin-bottom: 10px">
         <h2>Applications</h2>
+        <p class="help-block">Joins dataset, code that can run on a resource</p>
         <br>
         <div class="btn-group pull-right" style="left: -20px;top: -5px;">
             <button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -18,7 +19,7 @@
     </div>
     <hr style="margin: 0px;">
 
-    <div class="onere-list">
+    <div class="onere-list" style="margin-top: 22px;">
         <div class="onere-list-item" 
             ng-repeat="app in apps" 
             ng-class="{'active': selected == app}"
@@ -91,16 +92,30 @@
                 </thead>
                 <tbody>
                 <tr ng-repeat="dataset in selected.datasets">
-                    <td>
+                    <td width="35%">
                         <input type="text" ng-change="save()" ng-model="dataset.name" class="form-control"></input>
                     </td>
                     <td>
+                        <!--
                         <select ng-model="dataset.id._id" 
                             placedholder="Dataset"
                             ng-change="save()"
                             ng-options="dataset._id as dataset.name for dataset in datasets" class="form-control">
-                            <option></option><!--needed to make required work-->
+                            <option></option> 
                         </select>
+                        -->
+
+                      <ui-select ng-model="dataset.id" ng-change="save()">
+                        <ui-select-match placeholder="Search dataset ...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="dataset in datasets">
+                          <div ng-bind-html="dataset.name | highlight: $select.search"></div>
+                          <small>
+                            <span ng-bind-html="''+dataset.desc | cut:true:100:'...'|highlight: $select.search"></span>
+                          </small>
+                        </ui-select-choices>
+                      </ui-select>
+
+                        
                     </td>
                     <!--
                     <td>
@@ -142,7 +157,7 @@
                 <!--some help content-->
                 <div class="help-block" ng-if="selected.config.type == 'docker'">
                     <img width="200px" src="img/docker.png">
-                    <p>Register your application as a docker container that can be executed on a docker engine. You can publish your container on dockerhub, Google Container Registry, or any public registries.</p>
+                    <p>Register your application as a docker container that can be executed on a docker engine. You can publish your container on dockerhub, quay.io or any public registries.</p>
                     <p>Upon execution, input datasets will be mounted on <code>/input/<datasetname></code> as read-only directories. You can output data to <code>/output</code> and will be published up to 25 days via ONERE UI.</p>
                     <p>Container will run with -u uid:gid set to the same user/group ID that is executing container.</p>
                 </div>
@@ -300,8 +315,10 @@
 
         <h3>Citation</h3>
         <blockquote class="well">
-            Doe, John. (2016); {{selected.name}}. ONERE Application.
-            <small>doi:10.12345/onere.{{selected._id}}</small>
+            <p>
+                Doe, John. (2016); {{selected.name}}. ONERE Application.
+            </p>
+            <doi type="'app'" id="selected._id"></doi>
         </blockquote>
 
         <!--debugging..-->

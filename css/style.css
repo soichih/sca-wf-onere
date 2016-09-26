@@ -37,6 +37,7 @@ blockquote {
     width: 100%;
     background-color: white;
 }
+/*
 .onere-page {
     margin-left: 80px;
 }
@@ -49,7 +50,6 @@ blockquote {
     height: 100%;
 
     background-color: #f0f0f0;
-    /*box-shadow: 2px 0px 2px #eee;*/
     border-right: 1px solid #eee;
     text-align: center;
 }
@@ -89,6 +89,7 @@ blockquote {
 .sca-sidebar hr {
     margin: 5px 0px;
 }
+*/
 /*
 #settings-menu {
     position: fixed;
@@ -318,4 +319,7 @@ scaprofile {
 border-left: 4px solid #ccc;
 padding-left: 15px;
 margin-bottom: 15px;
+}
+.ui-select-match-text {
+line-height: 1.2;
 }

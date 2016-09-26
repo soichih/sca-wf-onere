@@ -12,12 +12,11 @@
     <link rel="stylesheet" href="node_modules/angular-loading-bar/build/loading-bar.min.css">
     <link rel="stylesheet" href="node_modules/angularjs-toaster/toaster.min.css">
     <link rel="stylesheet" href="node_modules/angular/angular-csp.css">
-    <link rel="stylesheet" href="node_modules/angular-ui-select/select.min.css">
+    <link rel="stylesheet" href="node_modules/ui-select/dist/select.min.css">
     <link rel="stylesheet" href="node_modules/sca-ng-wf/css/style.css">
     <link rel="stylesheet" href="/shared/css/style.css">
 
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/onoffbutton.css">
 </head>
 <body>
     <!--
@@ -27,7 +26,7 @@
     -->
     <toaster-container toaster-options="{'position-class': 'toast-bottom-full-width'}"></toaster-container>
     <ng-include src="'t/sidebar.html'"></ng-include>
-    <div class="onere-page">
+    <div class="sca-sidebar-page">
         <ng-view></ng-view>
         <!--<ng-include src="'t/footer.html'"></ng-include>-->
     </div>
@@ -46,7 +45,7 @@
     <script src="node_modules/angular-cookies/angular-cookies.min.js"></script>
     <script src="node_modules/angular-loading-bar/build/loading-bar.min.js"></script>
     <script src="node_modules/angular-sanitize/angular-sanitize.min.js"></script><!-- suggested by ui-select-->
-    <script src="node_modules/angular-ui-select/select.min.js"></script>
+    <script src="node_modules/ui-select/dist/select.min.js"></script>
     <script src="node_modules/angular-bootstrap/ui-bootstrap.min.js"></script>
     <script src="node_modules/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
     <script src="node_modules/angularjs-toaster/toaster.min.js"></script>
@@ -78,7 +77,7 @@
     <script src="js/controllers/home.js"></script>
     <script src="js/routes.js"></script>
 
-    <script src="//onere-dev-instance.disqus.com/embed.js"></script>
+    <!--<script src="//onere-dev-instance.disqus.com/embed.js"></script>-->
 </body>
 
 </html>

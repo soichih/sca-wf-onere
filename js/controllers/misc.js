@@ -144,6 +144,9 @@ app.controller('RunsController', function($scope, toaster, $routeParams, $http, 
             .then(function(res) {
                 $scope.boot_log = res.data;
             });
+        } else {
+            $scope.boot_log = null;
+            $scope.stdout_log = null;
         }
     }
 

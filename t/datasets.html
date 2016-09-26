@@ -1,6 +1,7 @@
 <div class="subbar">
     <div style="padding-left: 20px; margin-bottom: 10px">
         <h2>Datasets</h2>
+        <p class="help-block">public data archive used to run registered applications</p>
         <br>
         <div class="btn-group pull-right" style="left: -20px;top: -5px;">
             <button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -18,7 +19,7 @@
     </div>
     <hr style="margin: 0px;">
 
-    <div class="onere-list">
+    <div class="onere-list" style="margin-top: 22px;">
         <div class="onere-list-item" 
             ng-repeat="dataset in datasets" 
             ng-class="{'active': selected == dataset}"
@@ -149,8 +150,10 @@
 
         <h3>Citation</h3>
         <blockquote class="well">
-            Doe, John. (2016); {{selected.name}}. ONERE Dataset.
-            <small>doi:10.12345/onere.{{selected._id}}</small>
+            <p>
+                Doe, John. (2016); {{selected.name}}. ONERE Dataset.
+            </p>
+            <doi type="'dataset'" id="selected._id"></doi>
         </blockquote>
 
         <!--debugging..-->

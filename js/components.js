@@ -87,6 +87,18 @@ app.directive('scaprofile', function() {
     }
 });
 
+app.directive('doi', function() {
+    return {
+        //template: '<small>doi:10.5967/XX{{id}}</small>',
+        template: '<a target="_blank" href="http://dx.doi.org/10.5967/{{type}}.{{id}}"><img src="https://zenodo.org/badge/doi/10.5967/{{type}}.{{id}}.svg" alt="10.5967/{{type}}.{{id}}"></a>',
+        scope: { type: '<', id: '<'},
+        controller: function($scope, profile) {
+            //TODO - do something with type
+        }
+    }
+});
+
+
 /*
 app.directive('dirDisqus', function($window) {
     return {

@@ -75,11 +75,9 @@
         </h2>
 
         <h2 class="page-heading" style="margin-bottom: 0px;"><small>Executing</small> {{selected.config._application.name}}</h2>
-        <div style="background-color: #f8f8f8; padding: 20px;">
-            <button type="button" class="btn btn-xs pull-right" ng-click="showdetail()">
-                <i class="fa fa-info-circle" aria-hidden="true"></i> See Application Detail</button>
-            <p class="help-block">{{selected.config._application.desc}}</p>
-        </div>
+        <i class="help-block">{{selected.config._application.desc}}</i>
+        <button type="button" class="btn btn-xs btn-default" ng-click="showdetail()">
+                <!--<i class="fa fa-info" aria-hidden="true"></i>&nbsp;&nbsp;-->See Detail</button>
 
         <h3>Execution Status</h3>
         <h4>
@@ -140,12 +138,10 @@
         <h3>Output</h3>
         <div class="section">
             <sca-product-raw taskid="selected._id"></sca-product-raw>
-            <!--
-            <button type="button" class="btn btn-xs btn-default pull-right">
+            <br>
+            <button type="button" class="btn btn-xs btn-default">
                 <i class="fa fa-cloud-download" aria-hidden="true"></i> Download All
             </button>
-            <br clear="both">
-            -->
         </div>
 
         <!--debugging..-->
