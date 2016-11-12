@@ -72,6 +72,22 @@
             placeholder="enter application summary here .."></textarea> 
         <br>
 
+        <div class="row">
+            <div class="col-md-3">
+                <h4 style="margin-top: 3px;">Projects</h4>
+            </div>
+            <div class="col-md-9">
+                <ui-select ng-model="selected.project_id" ng-change="save()">
+                    <ui-select-match placeholder="Search project...">{{$select.selected.name}}</ui-select-match>
+                    <ui-select-choices repeat="project in projects">
+                        <div ng-bind-html="project.name | highlight: $select.search"></div>
+                        <small ng-bind-html="''+project.desc | cut:true:130:'...'|highlight: $select.search"></small>
+                    </ui-select-choices>
+                </ui-select>
+                <p class="help-block">Members of this project can edit this application</p>
+            </div>
+        </div>
+
         <div class="row form-group">
             <div class="col-md-3">
                 <h4>Input Datasets</h4>
@@ -224,7 +240,7 @@
                 </div>
                 <div class="col-md-9">
                     <div ui-ace="{
-                        mode: 'bash',
+                        mode: 'sh',
                         onChange: save,
                     }" ng-model="selected.config.prescript"></div>
                     <div class="help-block">
@@ -267,7 +283,7 @@
                 </div>
                 <div class="col-md-9">
                     <div ui-ace="{
-                        mode: 'bash',
+                        mode: 'sh',
                         onChange: save,
                     }" ng-model="selected.config.prescript"></div>
                     <div class="help-block">
@@ -286,7 +302,7 @@
                 </div>
                 <div class="col-md-9">
                     <div ui-ace="{
-                        mode: 'bash',
+                        mode: 'sh',
                         onChange: save,
                     }" ng-model="selected.config.bash" style="height: 200px;"></div>
                     <div class="help-block">

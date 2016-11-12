@@ -29,12 +29,7 @@ app.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
         controller: 'AppsController',
         requiresLogin: true
     })
-    .when('/runs', {
-        templateUrl: 't/runs.html',
-        controller: 'RunsController',
-        requiresLogin: true
-    })
-    .when('/runs/:task_id', {
+    .when('/runs/:task_id?', {
         templateUrl: 't/runs.html',
         controller: 'RunsController',
         requiresLogin: true

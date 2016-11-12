@@ -28,6 +28,7 @@ var app = angular.module('app', [
     'sca-shared',
     'sca-product-raw',
     'yaru22.angular-timeago',
+    'ngDisqus',
 ]);
 
 //can't quite do the slidedown animation through pure angular/css.. borrowing slideDown from jQuery..
@@ -81,6 +82,12 @@ app.config(function(appconf, $httpProvider, jwtInterceptorProvider) {
         return jwt;
     }
     $httpProvider.interceptors.push('jwtInterceptor');
+});
+
+app.config(function(appconf, $disqusProvider, $locationProvider) {
+    console.log("disqus shortname:"+appconf.disqus_shortname);
+    $disqusProvider.setShortname(appconf.disqus_shortname);
+    //$locationProvider.hashPrefix('!');
 });
 
 /*

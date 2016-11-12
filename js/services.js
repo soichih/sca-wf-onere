@@ -123,6 +123,7 @@ app.factory('onere', function($http, appconf, $q) {
             //convert populated datasets.id back to mongo id
             var datasets = [];
             app.datasets.forEach(function(dataset) {
+                if(dataset.id) return; //maybe user didn't select dataset yet
                 datasets.push({name: dataset.name, id: dataset.id._id});
             });
 

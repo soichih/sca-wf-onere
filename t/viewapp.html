@@ -15,14 +15,14 @@
             </button>
         </h2>
         <h2 class="page-heading" style="border-bottom: 1px solid #eee">
+            <small class="pull-right" style="position: relative; top: 8px;">
+                <scaprofile id="app.user_id"></scaprofile> | <time class="text-muted">{{app.create_date|date}}</time><br>
+            </small>
             {{app.name}}
         </h2>
     </div><!--container-->
 </div><!--fixed-top-->
 <div class="container" style="margin-top: 110px">
-    <div class="pull-right">
-        <span class="text-muted">Publisher</span> <scaprofile id="app.user_id"></scaprofile> | <time class="text-muted">{{app.create_date|date}}</time><br>
-    </div>
     <i>{{app.desc}}</i>
 
     <h3>Input Datasets</h3>
@@ -62,7 +62,7 @@
             <p class="help-block">Following script can be executed on <strong>{{app.config.resource_type}}</strong></p>
             -->
             <div ui-ace="{
-                mode: 'bash',
+                mode: 'sh',
                 useWrapMode: true,
             }" readonly ng-model="app.config.bash" style="height: 250px;"></div>
         </div>
@@ -71,7 +71,7 @@
 
             <p class="help-block">Following preprocessing script will be executed prior to container submission.</p>
             <div ui-ace="{
-                mode: 'bash',
+                mode: 'sh',
                 useWrapMode: true,
             }" readonly ng-model="app.config.prescript"></div>
 
@@ -93,7 +93,7 @@
 
             <p class="help-block">Following preprocessing script needs to be executed prior to container submission.</p>
             <div ui-ace="{
-                mode: 'bash',
+                mode: 'sh',
                 useWrapMode: true,
             }" readonly ng-model="app.config.prescript"></div>
 
@@ -117,16 +117,13 @@
     
     <h3>Project</h3>
     <p class="help-block">This application belongs to following project</p>
-    <h4>Test Project</h4>
     <div class="row">
     <div class="col-md-8">
-        <p>The   open   neuroscience   embedded   reproducibility   environment   (ONERE).   We   propose   to  
-    implement   open   science   embedded   hardware­software   environments   based   on   public   cloud  
-    infrastructure   to   advance   the   scientific   reproducibility   of   neuroscience   research   and   extend   usage to   a   broader   base   of   neuroscience   researchers   and   students.   We   plan   to   use   software   abstraction, virtualization   and   containerization   technology   (virtual   machines   and   ​
-    Docker   images)   to   develop mechanisms   to   publish   complete   neuroscience   software   environments   associated   with   published  articles.</p>
+        <h4>{{app.project_id.name}}</h4>
+        <i>{{app.project_id.desc}}</i>
     </div>
     <div class="col-md-4">
-        <h4 style="margin-top: 0px;">Project Members</h4>
+        <h4 style="margin-top: 0px;">Project Members (TODO)</h4>
         <ul class="onere-contacts">
             <li>
                 Test User <a href="mailto:">&lt;test@example.org&gt;</a>
@@ -154,27 +151,8 @@
         <doi type="'app'" id="app._id"></doi>
     </blockquote>
 
-    <div id="disqus_thread"></div>
-    <script>
-
-    /**
-     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables */
-    /*
-    var disqus_config = function () {
-        this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
-        this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-    };
-    */
-    (function() { // DON'T EDIT BELOW THIS LINE
-        var d = document, s = d.createElement('script');
-        s.src = '//onere-dev-instance.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-    </script>
-    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-                                        
+    <!-- ## Doesn't work !!! Open issue ticket https://github.com/kirstein/angular-disqus/issues/21 -->
+    <div disqus="app._id"></div>
                                     
     <div class="text-muted">
         <hr style="margin-top: 200px;">

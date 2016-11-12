@@ -48,10 +48,25 @@ app.controller('DatasetsController', function($scope, toaster, $http, $timeout, 
         });
     });
 
+    //load projects
+    $http.get($scope.appconf.api+"/project", {params: {
+        //load all projects that user might care about
+        find: {
+            $or: [
+                {user_id: $scope.user.sub},
+                {admins: $scope.user.sub},
+                {members: $scope.user.sub},
+            ]
+        }
+    }})
+    .then(function(res) {
+        $scope.projects = res.data.projects;
+    }, $scope.toast_error);
+    
     //load datasets
     $http.get($scope.appconf.api+"/dataset", { params: {
         sort: '-create_date', //newer ones first
-        select: 'name desc config create_date',
+        select: 'project_id name desc config create_date',
 
         //TODO - I will probably allow datasets from user's projects
         find: JSON.stringify({
@@ -105,7 +120,7 @@ app.controller('DatasetsController', function($scope, toaster, $http, $timeout, 
     }
 
     var save_timer;
-    $scope.save_dataset = function() {
+    $scope.save = function() {
         var dataset = $scope.selected;
         if(!dataset) return; //not yet selected
         $timeout.cancel(save_timer); //clear previous timer
@@ -124,9 +139,6 @@ app.controller('DatasetsController', function($scope, toaster, $http, $timeout, 
     
     $scope.uploadFiles = function(file, errFiles) {
         var selected = $scope.selected;
-        //console.log("starting file upload");
-        //console.dir(file);
-        //console.dir(errFiles);
         if(file) {
             $scope.uploading = {
                 name: file.name,
@@ -187,7 +199,6 @@ app.controller('DatasetsController', function($scope, toaster, $http, $timeout, 
                     $modalInstance.dismiss('cancel');
                 }
             },
-            //size: 'lg',
         });
         //do download
         urldownload.result.then(function(url) {

@@ -25,6 +25,8 @@ angular.module('app.config', [])
     progress_api: host+'/api/progress',
     progress_url: host+'/progress',
 
+    disqus_shortname: 'onere-dev-instance',
+
     jwt_id: 'jwt',
 
     breads: [

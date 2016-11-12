@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('PageController', function($scope, appconf, jwtHelper, $location, $http, instance) {
+app.controller('PageController', function($scope, appconf, jwtHelper, $location, $http, instance, toaster) {
     //set some common scope objects
     $scope.appconf = appconf;
     $scope.title = appconf.title;
@@ -15,6 +15,7 @@ app.controller('PageController', function($scope, appconf, jwtHelper, $location,
     $scope.openpage = function(page) {
         console.log("path to "+page);
         $location.path(page);
+        window.scrollTo(0,0);
     }
 
     //relocate out of the app..
@@ -32,14 +33,11 @@ app.controller('PageController', function($scope, appconf, jwtHelper, $location,
             find: JSON.stringify({name: "onere"}) //too generic?
         }}).then(function(res) {
             $scope.resources.onere = res.data.resources[0];
-            console.log("onere resource");
-            console.dir($scope.resources.onere);
             $http.get($scope.appconf.wf_api+"/resource/best", {params: {
                 service: $scope.appconf.upload_task_id,
             }}).then(function(res) {
                 $scope.resources.upload = res.data.resource;
                 console.log("upload resource");
-                console.dir($scope.resources.upload);
             });
         }, console.dir);
 
@@ -73,10 +71,123 @@ app.controller('PageController', function($scope, appconf, jwtHelper, $location,
             }
         });
     }
+
+    $scope.toast_error = function(res) {
+        if(res.data && res.data.message) toaster.error(res.data.message);
+        else toaster.error(res.statusText);
+    }
 });
-app.controller('ProjectsController', function($scope, toaster) {
+
+app.controller('ProjectsController', function($scope, toaster, $http, $routeParams) {
     $scope.$parent.active_menu = "projects";
+    $scope.selected = null;
+
+    //populated below with all users (TODO - query profile dynamicly)
+    $scope.id2profile = {};
+    $scope.profiles = [];
+
+    function get_profiles(ids) {
+        var profiles = [];
+        ids.forEach(function(id) {
+            profiles.push($scope.id2profile[id]);
+        });        
+        return profiles;
+    }
+    
+    //load user profiles
+    $http.get($scope.appconf.auth_api+"/profiles")
+    .then(function(res) {
+        $scope.profiles = res.data;
+        
+        //then load projects
+        $http.get($scope.appconf.api+"/project", {params: {
+            //load everything for now..
+            find: {
+                $or: [
+                    {user_id: $scope.user.sub},
+                    {admins: $scope.user.sub},
+                    {members: $scope.user.sub},
+                ]
+            }
+        }})
+        .then(function(res) {
+            $scope.projects = res.data.projects;
+            //create obj id mapping
+            $scope.id2profile = {};
+            $scope.profiles.forEach(function(profile) {
+                $scope.id2profile[profile.id] = profile; 
+            });
+
+            //expand admins/members ids to profile
+            $scope.projects.forEach(function(project) {
+                //first figure out if user has update acceess
+                project.readonly = true;
+                if(project.user_id == $scope.user.sub) project.readonly = false;
+                if(~project.admins.indexOf($scope.user.sub.toString())) project.readonly = false;
+
+                project.user = $scope.id2profile[project.user_id];
+                project.admins = get_profiles(project.admins);
+                project.members = get_profiles(project.members);
+
+            });
+
+            //select first one or specified via url
+            if($routeParams.project_id) {
+                $scope.projects.forEach(function(project) {
+                    if(project._id == $routeParams.project_id) $scope.select(project);
+                });
+            } else if($scope.projects.length > 0) {
+                $scope.select($scope.projects[0]);
+            }
+        }, $scope.toast_error);
+    }, $scope.toast_error);
+    
+    $scope.select = function(project) {
+        /*
+        if($scope.selected) {
+            //let's reload page.. (replacement is broke)
+            $location.path("/projects/"+project._id);
+        } else {
+            //TODO update the URL hash
+            $scope.selected = task;
+            reload_logs();
+        }
+        */
+        $scope.selected = project;
+    }
+    
+    $scope.submit = function() {
+        //create copy of project because I am going to collapse the admins/members ids
+        var project = angular.copy($scope.selected); 
+        project.admins = project.admins.map(function(p) { return p.id; });
+        project.members = project.members.map(function(p) { return p.id; });
+
+        if($scope.selected._id) {
+            //do update
+            $http.put($scope.appconf.api+"/project/"+project._id, project)
+            .then(function(res) {
+                toaster.success("Updated project");
+            }, $scope.toast_error);
+        } else {
+            //do insert
+            $http.post($scope.appconf.api+"/project", project)
+            .then(function(res) {
+                $scope.selected._id = res.data._id;
+                toaster.success("Registered new project");
+            }, $scope.toast_error);
+        }   
+    }
+
+    $scope.add = function() {
+        var project = {
+            admins: [$scope.id2profile[$scope.user.sub]], 
+            members: [$scope.id2profile[$scope.user.sub]], 
+        };
+        $scope.selected = project;
+        $scope.projects.push(project);
+    }  
 });
+
 app.controller('RunsController', function($scope, toaster, $routeParams, $http, $location, $interval) {
     $scope.$parent.active_menu = "runs";
     $scope.selected = null;
@@ -99,10 +210,7 @@ app.controller('RunsController', function($scope, toaster, $routeParams, $http, 
         } else if($scope.tasks.length > 0) {
             $scope.select($scope.tasks[0]);
         }
-    }, function(res) {
-        if(res.data && res.data.message) toaster.error(res.data.message);
-        else toaster.error(res.statusText);
-    });
+    }, $scope.toast_error);
 
     $scope.showdetail = function() {
         console.log("/view/app/"+$scope.selected.config._application._id);
@@ -179,10 +287,7 @@ app.controller('RunsController', function($scope, toaster, $routeParams, $http, 
         $http.put($scope.appconf.wf_api+"/task/rerun/"+$scope.selected._id)
         .then(function(res) {
             toaster.success("Requested to rerun");
-        }, function(res) {
-            if(res.data && res.data.message) toaster.error(res.data.message);
-            else toaster.error(res.statusText);
-        });
+        }, $scope.toast_error);
     }
     $scope.delete = function() {
         if(!$scope.selected) return;//app not yet selected
@@ -193,10 +298,7 @@ app.controller('RunsController', function($scope, toaster, $routeParams, $http, 
             toaster.success("Successfully removed a task: "+$scope.selected._id);
             $scope.tasks.splice($scope.tasks.indexOf($scope.selected), 1);
             $scope.selected = null;
-        }, function(res) {
-            if(res.data && res.data.message) toaster.error(res.data.message);
-            else toaster.error(res.statusText);
-        });
+        }, $scope.toast_error);
         
     }
 });
@@ -220,10 +322,8 @@ app.controller('ViewappController', function($scope, toaster, $window, $http, $l
             return;
         }
         $scope.app = res.data.applications[0];
-    }, function(res) {
-        if(res.data && res.data.message) toaster.error(res.data.message);
-        else toaster.error(res.statusText);
-    });
+    }, $scope.toast_error);
+
     $scope.back = function() {
         //$location.path("/home");
         $window.history.back();

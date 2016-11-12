@@ -18,7 +18,7 @@ app.controller('AppsController', function($scope, toaster, $http, $timeout, oner
     //load datasets
     $http.get($scope.appconf.api+"/dataset", { params: {
         sort: '-create_date', //newer ones first
-        select: 'name desc create_date',
+        select: 'project_id name desc create_date',
 
         //TODO - I will probably allow datasets from user's projects
         find: JSON.stringify({
@@ -31,11 +31,26 @@ app.controller('AppsController', function($scope, toaster, $http, $timeout, oner
         if(res.data && res.data.message) toaster.error(res.data.message);
         else toaster.error(res.statusText);
     });
- 
+    
+    //load projects
+    $http.get($scope.appconf.api+"/project", {params: {
+        //load all projects that user might care about
+        find: {
+            $or: [
+                {user_id: $scope.user.sub},
+                {admins: $scope.user.sub},
+                {members: $scope.user.sub},
+            ]
+        }
+    }})
+    .then(function(res) {
+        $scope.projects = res.data.projects;
+    }, $scope.toast_error);
+  
     //load apps
     $http.get($scope.appconf.api+"/application", { params: {
         sort: '-create_date', //newer ones first
-        select: 'name desc datasets config create_date',
+        select: 'project_id name desc datasets config create_date',
         
         //TODO - I will probably allow application from user's projects
         find: JSON.stringify({

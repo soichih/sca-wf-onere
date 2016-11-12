@@ -43,13 +43,13 @@
         <tbody>
         <tr ng-repeat="app in apps" ng-click="open(app)">
             <td>
-                Test
+                {{app.project_id.name}}
             </td>
 
             <!--Name/Desc-->
             <td>
                 <h5 class="app-name">{{app.name}}</h5>
-                <p class="">{{app.desc|cut:true:200:' ...'}}</p>
+                <i>{{app.desc|cut:true:200:' ...'}}</i>
             </td>
 
             <!--dataset-->

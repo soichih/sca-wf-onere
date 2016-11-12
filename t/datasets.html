@@ -52,13 +52,23 @@
 
         <!--name/desc-->
         <input type="text" class="header" 
-            ng-change="save_dataset()"
+            ng-change="save()"
             ng-model="selected.name" 
             placeholder="enter dataset name here .."></input> 
         <textarea class="desc" 
-            ng-change="save_dataset()"
+            ng-change="save()"
             ng-model="selected.desc"
             placeholder="enter dataset summary here .."></textarea> 
+
+        <h3 style="margin-top: 3px;">Project</h3>
+        <p class="help-block">Members of following project can edit this dataset</p>
+        <ui-select ng-model="selected.project_id" ng-change="save()">
+            <ui-select-match placeholder="Search project...">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="project in projects">
+                <div ng-bind-html="project.name | highlight: $select.search"></div>
+                <small ng-bind-html="''+project.desc | cut:true:130:'...'|highlight: $select.search"></small>
+            </ui-select-choices>
+        </ui-select>
 
         <!--uploaded files-->
         <h3>Files</h3>

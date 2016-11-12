@@ -1,4 +1,136 @@
-<div class="container-fluid">
-    <br>
-    <p>TODO... Allow users to list / search / edit projects</p>
+<div class="subbar">
+    <div style="padding-left: 20px; margin-bottom: 10px">
+        <h2>Projects</h2>
+        <p class="help-block">Projects you are an admin or member of</p>
+        <br>
+        <div class="btn-group pull-right" style="left: -20px;top: -5px;">
+            <button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Options <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+            <li><a href="#">Project ABC</a></li>
+            <li><a href="#">Project DEF</a></li>
+            <li><a href="#">Project AAA</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+            </ul>
+        </div>
+        <span class="text-muted">{{projects.length}} projects</span>
+    </div>
+    <hr style="margin: 0px;">
+
+    <div class="onere-list" style="margin-top: 22px;">
+        <div class="onere-list-item" 
+            ng-repeat="project in projects" 
+            ng-class="{'active': selected == project}"
+            ng-click="select(project)">
+
+            <span ng-if="project.readonly" class="label label-warning pull-right">
+                <i class="fa fa-lock" aria-hidden="true"></i>
+            </span>
+
+            <div class="list-header">{{project.name||'untitled'}}</div>
+            <small>
+                <time class="text-muted" style="position: relative; top: -4px;">{{project.create_date | date}}</time>
+                <p>{{project.desc| cut:true:200:' ...'}}</p>
+            </small>
+        </div>
+        <div class="onere-list-addicon" ng-click="add()">
+            <i class="fa fa-plus-circle" aria-hidden="true"></i> 
+        </div>
+    </div>
+</div>
+<div class="onere-content" ng-if="selected">
+    <form ng-submit="submit()" style="margin-left: 30px; margin-right: 30px;">
+        <h2 style="position: relative; left: -10px;">
+            <i class="fa fa-trash-o" aria-hidden="true" ng-click="delete()"></i>&nbsp;&nbsp;&nbsp;
+            <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
+            <i class="fa fa-star-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
+            <i class="fa fa-share-alt" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
+
+            <span ng-if="selected.readonly" class="label label-warning pull-right" title="You are not listed as administrator">
+                <i class="fa fa-lock" aria-hidden="true"></i> Read Only
+            </span>
+        </h2>
+
+        <!--name/desc-->
+        <input type="text" class="header" required
+            ng-readonly="selected.readonly"
+            ng-model="selected.name" 
+            placeholder="enter project name here .."></input> 
+        <textarea class="desc" style="height: 150px"
+            ng-readonly="selected.readonly"
+            ng-model="selected.desc"
+            placeholder="enter project summary here .."></textarea> 
+
+        <div class="row">
+        <div class="col-md-3">
+            <h4 style="margin-top: 0px;">Registered By</h4>
+        </div>
+        <div class="col-md-9">
+            <p>{{selected.user.fullname}} <code>{{selected.user.email}}</code></p>
+        </div>
+        </div><!--row-->
+
+
+        <div class="row">
+        <div class="col-md-3">
+            <h4>Administrators</h4>
+        </div>
+        <div class="col-md-9">
+            <ui-select multiple 
+                ng-disabled="selected.readonly"
+                ng-model="selected.admins">
+                <ui-select-match placeholder="Select administrators...">
+                    {{$item.fullname}} <code>{{$item.email}}</code>
+                </ui-select-match>
+                <ui-select-choices repeat="profile in profiles | propsFilter: {fullname: $select.search, email: $select.search}">
+                    <span ng-bind-html="profile.fullname | highlight: $select.search"></span>
+                    <code ng-bind-html="''+profile.email|highlight: $select.search"></code>
+                </ui-select-choices>
+            </ui-select>
+            <p class="help-block">People who can edit this project</p>
+        </div>
+        </div><!--row-->
+
+        <div class="row">
+        <div class="col-md-3">
+            <h4>Members</h4>
+        </div>
+        <div class="col-md-9">
+            <ui-select multiple 
+                ng-disabled="selected.readonly"
+                ng-model="selected.members">
+                <ui-select-match placeholder="Select project members...">
+                    {{$item.fullname}} <code>{{$item.email}}</code>
+                </ui-select-match>
+                <ui-select-choices repeat="profile in profiles | propsFilter: {fullname: $select.search, email: $select.search}">
+                    <span ng-bind-html="profile.fullname | highlight: $select.search"></span>
+                    <code ng-bind-html="''+profile.email|highlight: $select.search"></code>
+                </ui-select-choices>
+            </ui-select>
+            <p class="help-block">People who are member of this project</p>
+        </div>
+        </div><!--row-->
+        
+        <!--placeholder for ui-select dropdown space-->
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div ng-if="!selected.readonly">
+            <hr>
+            <div class="pull-right">
+                <input type="submit" class="btn btn-primary" value="Submit"></input>
+            </div> 
+            <br clear="both">
+            <br>
+        </div>
+        <!--
+        <pre>{{selected|json}}</pre>
+        -->
+    </form>
 </div>
